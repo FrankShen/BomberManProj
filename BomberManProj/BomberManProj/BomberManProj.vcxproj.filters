@@ -18,18 +18,12 @@
     <ClCompile Include="src\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\TutorialApplication.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BaseApplication.cpp">
+    <ClCompile Include="src\OgreFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\TutorialApplication.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BaseApplication.h">
+    <ClInclude Include="src\OgreFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

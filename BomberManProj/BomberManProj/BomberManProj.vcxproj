@@ -86,13 +86,11 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\BaseApplication.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\TutorialApplication.cpp" />
+    <ClCompile Include="src\OgreFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\BaseApplication.h" />
-    <ClInclude Include="src\TutorialApplication.h" />
+    <ClInclude Include="src\OgreFramework.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
