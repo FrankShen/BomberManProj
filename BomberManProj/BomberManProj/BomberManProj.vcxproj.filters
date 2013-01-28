@@ -21,9 +21,15 @@
     <ClCompile Include="src\OgreFramework.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\MenuSceneClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\OgreFramework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MenuSceneClass.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

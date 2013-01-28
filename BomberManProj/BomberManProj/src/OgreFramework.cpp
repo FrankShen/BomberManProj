@@ -5,6 +5,7 @@
 
 OgreFramework::OgreFramework(void)
 	:mRoot(0),
+	menuScene(0),
 	mPluginsCfg(Ogre::StringUtil::BLANK),
 	mResourcesCfg(Ogre::StringUtil::BLANK)
 {
@@ -66,6 +67,16 @@ bool OgreFramework::initOgre(void)
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 	// initialise all resource groups
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+
+	menuScene = MenuSceneClass(mRoot);
+	menuScene.createSceneMgr();
+	menuScene.createCamera();
+	menuScene.createViewport(mWindow);
+	menuScene.createScene();
+	menuScene.createFrameListener();
+	
+	
+	mRoot->startRendering();
 
 	return true;
 }

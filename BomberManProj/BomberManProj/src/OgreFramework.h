@@ -1,5 +1,6 @@
 #pragma once
-#include <OgreRoot.h>
+#include <Ogre.h>
+#include "MenuSceneClass.h"
 
 class OgreFramework
 {
@@ -13,5 +14,6 @@ private:
 	Ogre::String mPluginsCfg;
 	Ogre::String mResourcesCfg;
 	Ogre::RenderWindow *mWindow;
+	MenuSceneClass menuScene;
 };
 
