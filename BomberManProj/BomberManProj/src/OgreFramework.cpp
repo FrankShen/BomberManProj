@@ -61,7 +61,14 @@ bool OgreFramework::initOgre(void)
 	}
 
 	// auto create a window called "BomberManProj"
-	mWindow = mRoot->initialise(true, "BomberManProj");
+
+	Ogre::NameValuePairList params;
+	params["title"] = "BomberManProj";
+	params["border"] = "fixed";
+	params["FSAA"] = "8";
+	mRoot->initialise(false, "BomberManProj");
+	mWindow = mRoot->createRenderWindow("BomberManProj", 800, 600, false, &params);
+
 
 	// set default mipmap level
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
