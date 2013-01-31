@@ -2,18 +2,24 @@
 
 #include <OgreException.h>
 #include <OgreConfigFile.h>
+#include <RTShaderSystem/OgreRTShaderSystem.h>
 
 OgreFramework::OgreFramework(void)
 	:mRoot(0),
-	menuScene(0),
 	mPluginsCfg(Ogre::StringUtil::BLANK),
-	mResourcesCfg(Ogre::StringUtil::BLANK)
+	mResourcesCfg(Ogre::StringUtil::BLANK),
+	mKeyboard(0),
+	mMouse(0)
 {
+
 }
 
 
 OgreFramework::~OgreFramework(void)
 {
+	//Remove ourself as a Window listener
+	Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
+	windowClosed(mWindow);
 	delete mRoot;
 }
 
@@ -65,7 +71,7 @@ bool OgreFramework::initOgre(void)
 	Ogre::NameValuePairList params;
 	params["title"] = "BomberManProj";
 	params["border"] = "fixed";
-	params["FSAA"] = "8";
+	//params["FSAA"] = "8";
 	mRoot->initialise(false, "BomberManProj");
 	mWindow = mRoot->createRenderWindow("BomberManProj", 800, 600, false, &params);
 
@@ -75,15 +81,77 @@ bool OgreFramework::initOgre(void)
 	// initialise all resource groups
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
-	menuScene = MenuSceneClass(mRoot);
-	menuScene.createSceneMgr();
-	menuScene.createCamera();
-	menuScene.createViewport(mWindow);
-	menuScene.createScene();
-	menuScene.createFrameListener();
-	
-	
+	// initialise OIS
+	OIS::ParamList pl;
+	size_t windowHnd = 0;
+	std::ostringstream windowHndStr;
+	mWindow->getCustomAttribute("WINDOW", &windowHnd);
+	windowHndStr << windowHnd;
+	pl.insert(std::make_pair(std::string("WINDOW"),windowHndStr.str()));
+	mInputMgr = OIS::InputManager::createInputSystem(pl);
+
+	mKeyboard = static_cast<OIS::Keyboard*>(mInputMgr->createInputObject( OIS::OISKeyboard, false ));
+	mMouse = static_cast<OIS::Mouse*>(mInputMgr->createInputObject( OIS::OISMouse, false ));
+
+	unsigned int width, height, depth;
+	int top, left;
+	mWindow->getMetrics(width, height, depth, left, top);
+	const OIS::MouseState &ms = mMouse->getMouseState();
+	ms.width = width;
+	ms.height = height;
+
+	//Register as a Window listener
+	Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
+
+	// initialise menu scene
+	createMenuScene();
+
+
+	mRoot->addFrameListener(this);
 	mRoot->startRendering();
 
 	return true;
+}
+
+void OgreFramework::createMenuScene(void)
+{
+	menuScene.createSceneMgr(mRoot);
+	menuScene.createCamera();
+	menuScene.createScene();
+
+	mViewport = mWindow->addViewport(menuScene.mCamera);
+	mViewport->setBackgroundColour(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
+	menuScene.mCamera->setAspectRatio(
+		Ogre::Real(mViewport->getActualWidth()) / Ogre::Real(mViewport->getActualHeight()));
+
+}
+
+bool OgreFramework::frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+	if(mWindow->isClosed())
+		return false;
+
+	//Need to capture/update each device
+	mKeyboard->capture();
+	mMouse->capture();
+
+	if(mKeyboard->isKeyDown(OIS::KC_ESCAPE))
+		return false;
+
+	return true;
+}
+
+void OgreFramework::windowClosed(Ogre::RenderWindow* rw)
+{
+	if( rw == mWindow )
+	{
+		if( mInputMgr )
+		{
+			mInputMgr->destroyInputObject( mMouse );
+			mInputMgr->destroyInputObject( mKeyboard );
+
+			OIS::InputManager::destroyInputSystem(mInputMgr);
+			mInputMgr = 0;
+		}
+	}
 }
