@@ -29,6 +29,8 @@ private:
 	OIS::Mouse *mMouse;
 	MenuSceneClass menuScene;
 
+	bool mShutdown;
+
 	void createMenuScene(void);
 
 };

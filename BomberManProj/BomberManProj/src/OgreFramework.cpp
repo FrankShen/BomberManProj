@@ -9,7 +9,8 @@ OgreFramework::OgreFramework(void)
 	mPluginsCfg(Ogre::StringUtil::BLANK),
 	mResourcesCfg(Ogre::StringUtil::BLANK),
 	mKeyboard(0),
-	mMouse(0)
+	mMouse(0),
+	mShutdown(false)
 {
 
 }
@@ -71,7 +72,7 @@ bool OgreFramework::initOgre(void)
 	Ogre::NameValuePairList params;
 	params["title"] = "BomberManProj";
 	params["border"] = "fixed";
-	//params["FSAA"] = "8";
+	params["FSAA"] = "8";
 	mRoot->initialise(false, "BomberManProj");
 	mWindow = mRoot->createRenderWindow("BomberManProj", 800, 600, false, &params);
 
@@ -88,6 +89,10 @@ bool OgreFramework::initOgre(void)
 	mWindow->getCustomAttribute("WINDOW", &windowHnd);
 	windowHndStr << windowHnd;
 	pl.insert(std::make_pair(std::string("WINDOW"),windowHndStr.str()));
+	pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND" )));
+	pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
+	//pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
+	//pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
 	mInputMgr = OIS::InputManager::createInputSystem(pl);
 
 	mKeyboard = static_cast<OIS::Keyboard*>(mInputMgr->createInputObject( OIS::OISKeyboard, false ));
@@ -120,7 +125,7 @@ void OgreFramework::createMenuScene(void)
 	menuScene.createScene();
 
 	mViewport = mWindow->addViewport(menuScene.mCamera);
-	mViewport->setBackgroundColour(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
+	mViewport->setBackgroundColour(Ogre::ColourValue(0.0f, 0.0f, 0.0f));
 	menuScene.mCamera->setAspectRatio(
 		Ogre::Real(mViewport->getActualWidth()) / Ogre::Real(mViewport->getActualHeight()));
 
@@ -130,13 +135,15 @@ bool OgreFramework::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
 	if(mWindow->isClosed())
 		return false;
-
+	if (mShutdown)
+		return false;
 	//Need to capture/update each device
 	mKeyboard->capture();
 	mMouse->capture();
 
-	if(mKeyboard->isKeyDown(OIS::KC_ESCAPE))
-		return false;
+	if (mKeyboard->isKeyDown(OIS::KC_ESCAPE)){
+		mShutdown = true;
+	}
 
 	return true;
 }
