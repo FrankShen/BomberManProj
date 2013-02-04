@@ -91,8 +91,8 @@ bool OgreFramework::initOgre(void)
 	pl.insert(std::make_pair(std::string("WINDOW"),windowHndStr.str()));
 	pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND" )));
 	pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
-	//pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
-	//pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
+	pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
+	pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
 	mInputMgr = OIS::InputManager::createInputSystem(pl);
 
 	mKeyboard = static_cast<OIS::Keyboard*>(mInputMgr->createInputObject( OIS::OISKeyboard, false ));
@@ -110,6 +110,7 @@ bool OgreFramework::initOgre(void)
 
 	// initialise menu scene
 	createMenuScene();
+	sceneState = MENUSCENE;
 
 
 	mRoot->addFrameListener(this);
@@ -141,9 +142,7 @@ bool OgreFramework::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	mKeyboard->capture();
 	mMouse->capture();
 
-	if (mKeyboard->isKeyDown(OIS::KC_ESCAPE)){
-		mShutdown = true;
-	}
+	logicalFrameFunc(evt);
 
 	return true;
 }
@@ -160,5 +159,27 @@ void OgreFramework::windowClosed(Ogre::RenderWindow* rw)
 			OIS::InputManager::destroyInputSystem(mInputMgr);
 			mInputMgr = 0;
 		}
+	}
+}
+
+void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
+{
+	switch(sceneState)
+	{
+	case MENUSCENE:
+		{
+			if (mKeyboard->isKeyDown(OIS::KC_RETURN)){
+				mShutdown = true;
+			}
+			menuScene.mTitleAnimState->addTime(evt.timeSinceLastFrame);
+			menuScene.mBackgroundAnimState->addTime(evt.timeSinceLastFrame);
+			break;
+		}
+	case GAMESCENE:
+		{
+			break;
+		}
+	default:
+		break;
 	}
 }
