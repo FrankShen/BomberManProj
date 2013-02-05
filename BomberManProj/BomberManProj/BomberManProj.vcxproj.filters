@@ -24,12 +24,24 @@
     <ClCompile Include="src\MenuSceneClass.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameSceneClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\OgreFramework.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\MenuSceneClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameSceneClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PlayerClass.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

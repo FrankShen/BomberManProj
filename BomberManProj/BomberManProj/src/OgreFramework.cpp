@@ -109,9 +109,12 @@ bool OgreFramework::initOgre(void)
 	Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
 
 	// initialise menu scene
+	/*
 	createMenuScene();
 	sceneState = MENUSCENE;
-
+	*/
+	createGameScene();
+	sceneState = GAMESCENE;
 
 	mRoot->addFrameListener(this);
 	mRoot->startRendering();
@@ -129,9 +132,17 @@ void OgreFramework::createMenuScene(void)
 	mViewport->setBackgroundColour(Ogre::ColourValue(0.0f, 0.0f, 0.0f));
 	menuScene.mCamera->setAspectRatio(
 		Ogre::Real(mViewport->getActualWidth()) / Ogre::Real(mViewport->getActualHeight()));
-
 }
 
+void OgreFramework::createGameScene(void)
+{
+	gameScene.createSceneMgr(mRoot);
+	gameScene.createCamera();
+	gameScene.createScene();
+	mViewport = mWindow->addViewport(gameScene.mCamera);
+	mViewport->setBackgroundColour(Ogre::ColourValue(0.0f, 0.0f, 0.0f));
+	gameScene.mCamera->setAspectRatio(Ogre::Real(mViewport->getActualWidth()) / Ogre::Real(mViewport->getActualHeight()));
+}
 bool OgreFramework::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
 	if(mWindow->isClosed())
@@ -176,7 +187,22 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 			break;
 		}
 	case GAMESCENE:
-		{
+		{			
+			if (mKeyboard->isKeyDown(OIS::KC_ESCAPE)){
+				mShutdown = true;
+			}
+			if (mKeyboard->isKeyDown(OIS::KC_DOWN)){
+				if (!gameScene.animState)
+				{
+					gameScene.animation();
+				} else if (gameScene.animState->hasEnded()){
+					gameScene.animation();
+				}
+				
+			}
+			if (gameScene.animState)
+				if (!gameScene.animState->hasEnded())
+					gameScene.animState->addTime(evt.timeSinceLastFrame);
 			break;
 		}
 	default:

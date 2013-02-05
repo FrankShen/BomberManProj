@@ -1,6 +1,8 @@
 #pragma once
 #include <Ogre.h>
+#include <OIS.h>
 #include "MenuSceneClass.h"
+#include "GameSceneClass.h"
 
 #define MENUSCENE 1001
 #define GAMESCENE 1002
@@ -31,10 +33,12 @@ private:
 	OIS::Keyboard *mKeyboard;
 	OIS::Mouse *mMouse;
 	MenuSceneClass menuScene;
+	GameSceneClass gameScene;
 
 	bool mShutdown;
 
 	void createMenuScene(void);
+	void createGameScene(void);
 	void logicalFrameFunc(const Ogre::FrameEvent& evt);
 };
 
