@@ -3,7 +3,8 @@
 
 GameSceneClass::GameSceneClass(void)
 {
-	animState = NULL;
+	nonNPCAnimState = NULL;
+	NPCAnimState = NULL;
 }
 
 
@@ -40,11 +41,11 @@ void GameSceneClass::createScene(void)
 	tempBoardNode->setOrientation(q1*q2);
 	tempBoardNode->attachObject(tempBoard);
 
-	Ogre::Entity *test = mSceneMgr->createEntity("test","ogrehead.mesh");
-	test->setCastShadows(true);
-	testNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("testnode");
-	testNode->setPosition(0, 50, 0);
-	testNode->attachObject(test);
+	Ogre::Entity *nonNPC = mSceneMgr->createEntity("nonnpcplayer","ogrehead.mesh");
+	nonNPC->setCastShadows(true);
+	nonNPCPlayerNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("nonnpcplayerNode");
+	nonNPCPlayerNode->setPosition(0, 50, 0);
+	nonNPCPlayerNode->attachObject(nonNPC);
 
 	// Set ambient light
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
@@ -56,12 +57,136 @@ void GameSceneClass::createScene(void)
 	l->setDirection(Ogre::Vector3(-1, -1, -1));
 }
 
+void GameSceneClass::askingPlayer(int playerType, int eventType)
+{
+	switch(eventType)
+	{
+	case EVENT_UP:
+		{
+			if (playerType == NON_NPC){
+				if (nonNPCAnimState){
+					if (nonNPCAnimState->hasEnded()){
+						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), nonNPCAnimState);
+					}
+				} else {
+					movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), nonNPCAnimState);
+				}
+			} else {
+				if (NPCAnimState){
+					if (NPCAnimState->hasEnded()){
+						movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
+					}
+				} else {
+					movingPlayer(NPC, NPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
+				}
+			}
+			break;
+		}
+	case EVENT_DOWN:
+		{
+			if (playerType == NON_NPC){
+				if (nonNPCAnimState){
+					if (nonNPCAnimState->hasEnded()){
+						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), nonNPCAnimState);
+					}
+				} else {
+					movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), nonNPCAnimState);
+				}
+			} else {
+				if (NPCAnimState){
+					if (NPCAnimState->hasEnded()){
+						movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
+					}
+				} else {
+					movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
+				}
+			}
+			break;
+		}
+	case EVENT_LEFT:
+		{
+			if (playerType == NON_NPC){
+				if (nonNPCAnimState){
+					if (nonNPCAnimState->hasEnded()){
+						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), nonNPCAnimState);
+					}
+				} else {
+					movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), nonNPCAnimState);
+				}
+			} else {
+				if (NPCAnimState){
+					if (NPCAnimState->hasEnded()){
+						movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
+					}
+				} else {
+					movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
+				}
+			}
+			break;
+		}
+	case EVENT_RIGHT:
+		{
+			if (playerType == NON_NPC){
+				if (nonNPCAnimState){
+					if (nonNPCAnimState->hasEnded()){
+						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
+					}
+				} else {
+					movingPlayer(NPC,nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
+				}
+			} else {
+				if (NPCAnimState){
+					if (NPCAnimState->hasEnded()){
+						movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
+					}
+				} else {
+					movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
+				}
+			}
+			break;
+		}
+	default:
+		break;
+	}
+}
+
+void GameSceneClass::movingPlayer(int playerType, Ogre::SceneNode *playerNode, Ogre::Vector3 direction,	Ogre::AnimationState *animState)
+{
+	Ogre::Animation *anim;
+	if (playerType == NON_NPC){
+		if (animState){
+			mSceneMgr->destroyAnimation("nonnpcmoving");
+		}
+		anim = mSceneMgr->createAnimation("nonnpcmoving", DEFAULT_SPEED);
+		nonNPCAnimState = mSceneMgr->createAnimationState("nonnpcmoving");
+		animState = nonNPCAnimState;
+	} else {
+		if (animState){
+			mSceneMgr->destroyAnimation("npcmoving");
+		}
+		anim = mSceneMgr->createAnimation("npcmoving", DEFAULT_SPEED);
+		NPCAnimState = mSceneMgr->createAnimationState("npcmoving");
+		animState = NPCAnimState;
+	}
+	anim->setInterpolationMode(Ogre::Animation::IM_LINEAR);
+	Ogre::NodeAnimationTrack *track = anim->createNodeTrack(0, playerNode);
+	Ogre::TransformKeyFrame *key = track->createNodeKeyFrame(0);
+	Ogre::Vector3 currentPos = playerNode->getPosition();
+	key->setTranslate(currentPos);
+	key = track->createNodeKeyFrame(DEFAULT_SPEED);
+	currentPos.x += direction.x;
+	currentPos.y += direction.y;
+	currentPos.z += direction.z;
+	key->setTranslate(currentPos);
+
+	animState->setEnabled(true);
+	animState->setLoop(false);
+}
+
+
+/*
 void GameSceneClass::animation()
 {
-	if (animState)
-	{
-		mSceneMgr->destroyAnimation("moving");
-	}
 	Ogre::Animation *anim = mSceneMgr->createAnimation("moving", 1);
 	anim->setInterpolationMode(Ogre::Animation::IM_LINEAR);
 	Ogre::NodeAnimationTrack *track = anim->createNodeTrack(0, testNode);
@@ -76,3 +201,4 @@ void GameSceneClass::animation()
 	animState->setEnabled(true);
 	animState->setLoop(false);
 }
+*/

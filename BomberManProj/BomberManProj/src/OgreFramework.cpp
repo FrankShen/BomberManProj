@@ -192,17 +192,34 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 				mShutdown = true;
 			}
 			if (mKeyboard->isKeyDown(OIS::KC_DOWN)){
-				if (!gameScene.animState)
-				{
-					gameScene.animation();
-				} else if (gameScene.animState->hasEnded()){
-					gameScene.animation();
+				if (!gameScene.nonNPCAnimState){
+					gameScene.askingPlayer(NON_NPC, EVENT_DOWN);
+				} else if (gameScene.nonNPCAnimState->hasEnded()){
+					gameScene.askingPlayer(NON_NPC, EVENT_DOWN);
 				}
-				
+			} else if (mKeyboard->isKeyDown(OIS::KC_UP)){
+				if (!gameScene.nonNPCAnimState){
+					gameScene.askingPlayer(NON_NPC, EVENT_UP);
+				} else if (gameScene.nonNPCAnimState->hasEnded()){
+					gameScene.askingPlayer(NON_NPC, EVENT_UP);
+				}
+			} else if (mKeyboard->isKeyDown(OIS::KC_LEFT)){
+				if (!gameScene.nonNPCAnimState){
+					gameScene.askingPlayer(NON_NPC, EVENT_LEFT);
+				} else if (gameScene.nonNPCAnimState->hasEnded()){
+					gameScene.askingPlayer(NON_NPC, EVENT_LEFT);
+				}
+			} else if (mKeyboard->isKeyDown(OIS::KC_RIGHT)){
+				if (!gameScene.nonNPCAnimState){
+					gameScene.askingPlayer(NON_NPC, EVENT_RIGHT);
+				} else if (gameScene.nonNPCAnimState->hasEnded()){
+					gameScene.askingPlayer(NON_NPC, EVENT_RIGHT);
+				}
 			}
-			if (gameScene.animState)
-				if (!gameScene.animState->hasEnded())
-					gameScene.animState->addTime(evt.timeSinceLastFrame);
+
+			if (gameScene.nonNPCAnimState)
+				if (!gameScene.nonNPCAnimState->hasEnded())
+					gameScene.nonNPCAnimState->addTime(evt.timeSinceLastFrame);
 			break;
 		}
 	default:
