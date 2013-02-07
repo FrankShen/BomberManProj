@@ -88,12 +88,14 @@
   <ItemGroup>
     <ClCompile Include="src\GameSceneClass.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\MapClass.cpp" />
     <ClCompile Include="src\MenuSceneClass.cpp" />
     <ClCompile Include="src\OgreFramework.cpp" />
     <ClCompile Include="src\PlayerClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GameSceneClass.h" />
+    <ClInclude Include="src\MapClass.h" />
     <ClInclude Include="src\MenuSceneClass.h" />
     <ClInclude Include="src\OgreFramework.h" />
     <ClInclude Include="src\PlayerClass.h" />

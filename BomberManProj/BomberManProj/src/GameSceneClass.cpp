@@ -12,6 +12,19 @@ GameSceneClass::~GameSceneClass(void)
 {
 }
 
+void GameSceneClass::initGameData(void)
+{
+	nonNPCPlayer.playerType = NON_NPC;
+	nonNPCPlayer.bombAvailable = 1;
+	nonNPCPlayer.pos = map.nonNPCStartPos;
+	nonNPCPlayer.power = 1;
+
+	NPCPlayer.playerType = NPC;
+	NPCPlayer.bombAvailable = 1;
+	NPCPlayer.pos = map.NPCStartPos;
+	NPCPlayer.power = 1;
+}
+
 void GameSceneClass::createSceneMgr(Ogre::Root *_root)
 {
 	mSceneMgr = _root->createSceneManager(Ogre::ST_GENERIC, "MenuSceneMgr");
@@ -41,10 +54,26 @@ void GameSceneClass::createScene(void)
 	tempBoardNode->setOrientation(q1*q2);
 	tempBoardNode->attachObject(tempBoard);
 
+	Ogre::Entity *destroyableBlock = mSceneMgr->createEntity("destroyableblock", "boomb_destroyableBlock.mesh");
+	destroyableBlock->setMaterialName("boomb_testDestroyable");
+	destroyableBlock->setCastShadows(true);
+
+	for (int x = 0; x < 15; ++x){
+		for (int y = 0; y < 13; ++y){
+			if (map.getMapAtPos(x, y) == MAP_DESTROYABLE)
+			{
+				mapNode[x][y] = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+				mapNode[x][y]->setPosition(0, 0, 0);
+				mapNode[x][y]->setPosition(getWorldCoord(Ogre::Vector2(x,y)));
+				mapNode[x][y]->attachObject(destroyableBlock);
+			}
+		}
+	}
+
 	Ogre::Entity *nonNPC = mSceneMgr->createEntity("nonnpcplayer","ogrehead.mesh");
 	nonNPC->setCastShadows(true);
 	nonNPCPlayerNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("nonnpcplayerNode");
-	nonNPCPlayerNode->setPosition(0, 50, 0);
+	nonNPCPlayerNode->setPosition(getWorldCoord(nonNPCPlayer.pos));
 	nonNPCPlayerNode->attachObject(nonNPC);
 
 	// Set ambient light
@@ -64,84 +93,124 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 	case EVENT_UP:
 		{
 			if (playerType == NON_NPC){
-				if (nonNPCAnimState){
-					if (nonNPCAnimState->hasEnded()){
+				int mapType = map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y - 1);
+				if (mapType == MAP_NONE){
+					if (nonNPCAnimState){
+						if (nonNPCAnimState->hasEnded()){
+							nonNPCPlayer.pos.y--;
+							movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), nonNPCAnimState);
+						}
+					} else {
+						nonNPCPlayer.pos.y--;
 						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), nonNPCAnimState);
 					}
-				} else {
-					movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), nonNPCAnimState);
-				}
+				} // else if
 			} else {
-				if (NPCAnimState){
-					if (NPCAnimState->hasEnded()){
-						movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
+				int mapType = map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y - 1);
+				if (mapType == MAP_NONE){
+					if (NPCAnimState){
+						if (NPCAnimState->hasEnded()){
+							NPCPlayer.pos.y--;
+							movingPlayer(NPC, NPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
+						}
+					} else {
+						NPCPlayer.pos.y--;
+						movingPlayer(NPC, NPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
 					}
-				} else {
-					movingPlayer(NPC, NPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
-				}
+				} // else if
 			}
 			break;
 		}
 	case EVENT_DOWN:
 		{
 			if (playerType == NON_NPC){
-				if (nonNPCAnimState){
-					if (nonNPCAnimState->hasEnded()){
+				int mapType = map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y + 1);
+				if (mapType == MAP_NONE){
+					if (nonNPCAnimState){
+						if (nonNPCAnimState->hasEnded()){
+							nonNPCPlayer.pos.y++;
+							movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), nonNPCAnimState);
+						}
+					} else {
+						nonNPCPlayer.pos.y++;
 						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), nonNPCAnimState);
 					}
-				} else {
-					movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), nonNPCAnimState);
-				}
+				} // else if
 			} else {
-				if (NPCAnimState){
-					if (NPCAnimState->hasEnded()){
-						movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
+				int mapType = map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y + 1);
+				if (mapType == MAP_NONE){
+					if (NPCAnimState){
+						if (NPCAnimState->hasEnded()){
+							NPCPlayer.pos.y++;
+							movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
+						}
+					} else {
+						NPCPlayer.pos.y++;
+						movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
 					}
-				} else {
-					movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
-				}
+				} // else if
 			}
 			break;
 		}
 	case EVENT_LEFT:
 		{
 			if (playerType == NON_NPC){
-				if (nonNPCAnimState){
-					if (nonNPCAnimState->hasEnded()){
+				int mapType = map.getMapAtPos(nonNPCPlayer.pos.x - 1, nonNPCPlayer.pos.y);
+				if (mapType == MAP_NONE){
+					if (nonNPCAnimState){
+						if (nonNPCAnimState->hasEnded()){
+							nonNPCPlayer.pos.x--;
+							movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), nonNPCAnimState);
+						}
+					} else {
+						nonNPCPlayer.pos.x--;
 						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), nonNPCAnimState);
 					}
-				} else {
-					movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), nonNPCAnimState);
-				}
+				} // else if
 			} else {
-				if (NPCAnimState){
-					if (NPCAnimState->hasEnded()){
-						movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
+				int mapType = map.getMapAtPos(NPCPlayer.pos.x - 1, NPCPlayer.pos.y);
+				if (mapType == MAP_NONE){
+					if (NPCAnimState){
+						if (NPCAnimState->hasEnded()){
+							NPCPlayer.pos.x--;
+							movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
+						}
+					} else {
+						NPCPlayer.pos.x--;
+						movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
 					}
-				} else {
-					movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
-				}
+				} // else if
 			}
 			break;
 		}
 	case EVENT_RIGHT:
 		{
 			if (playerType == NON_NPC){
-				if (nonNPCAnimState){
-					if (nonNPCAnimState->hasEnded()){
-						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
+				int mapType = map.getMapAtPos(nonNPCPlayer.pos.x + 1, nonNPCPlayer.pos.y);
+				if (mapType == MAP_NONE){
+					if (nonNPCAnimState){
+						if (nonNPCAnimState->hasEnded()){
+							nonNPCPlayer.pos.x++;
+							movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
+						}
+					} else {
+						nonNPCPlayer.pos.x++;
+						movingPlayer(NON_NPC,nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
 					}
-				} else {
-					movingPlayer(NPC,nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
-				}
+				} // else if
 			} else {
-				if (NPCAnimState){
-					if (NPCAnimState->hasEnded()){
-						movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
+				int mapType = map.getMapAtPos(NPCPlayer.pos.x + 1, NPCPlayer.pos.y);
+				if (mapType == MAP_NONE){
+					if (NPCAnimState){
+						if (NPCAnimState->hasEnded()){
+							NPCPlayer.pos.x++;
+							movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
+						}
+					} else {
+						NPCPlayer.pos.x++;
+						movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
 					}
-				} else {
-					movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
-				}
+				} // else if
 			}
 			break;
 		}
@@ -174,31 +243,18 @@ void GameSceneClass::movingPlayer(int playerType, Ogre::SceneNode *playerNode, O
 	Ogre::Vector3 currentPos = playerNode->getPosition();
 	key->setTranslate(currentPos);
 	key = track->createNodeKeyFrame(DEFAULT_SPEED);
-	currentPos.x += direction.x;
-	currentPos.y += direction.y;
-	currentPos.z += direction.z;
+	currentPos += direction;
 	key->setTranslate(currentPos);
 
 	animState->setEnabled(true);
 	animState->setLoop(false);
 }
 
-
-/*
-void GameSceneClass::animation()
+Ogre::Vector3 GameSceneClass::getWorldCoord(Ogre::Vector2 pos)
 {
-	Ogre::Animation *anim = mSceneMgr->createAnimation("moving", 1);
-	anim->setInterpolationMode(Ogre::Animation::IM_LINEAR);
-	Ogre::NodeAnimationTrack *track = anim->createNodeTrack(0, testNode);
-	Ogre::TransformKeyFrame *key = track->createNodeKeyFrame(0);
-	Ogre::Vector3 currentPos = testNode->getPosition();
-	key->setTranslate(currentPos);
-	key = track->createNodeKeyFrame(1);
-	currentPos.z += 70;
-	key->setTranslate(currentPos);
-
-	animState = mSceneMgr->createAnimationState("moving");
-	animState->setEnabled(true);
-	animState->setLoop(false);
+	Ogre::Vector3 rtn;
+	rtn.y = 0;
+	rtn.x = GRID_SIZE*(pos.x - 7);
+	rtn.z = GRID_SIZE*(pos.y - 6);
+	return rtn;
 }
-*/

@@ -1,5 +1,5 @@
 #pragma once
-
+#include <Ogre.h>
 #define NON_NPC 1001
 #define NPC 1002
 #define EVENT_UP 1003
@@ -16,6 +16,6 @@ public:
 	int playerType;
 	int bombAvailable;
 	int power;
-	int position[2];
+	Ogre::Vector2 pos;
 };
 

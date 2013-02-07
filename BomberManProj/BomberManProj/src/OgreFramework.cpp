@@ -136,6 +136,7 @@ void OgreFramework::createMenuScene(void)
 
 void OgreFramework::createGameScene(void)
 {
+	gameScene.initGameData();
 	gameScene.createSceneMgr(mRoot);
 	gameScene.createCamera();
 	gameScene.createScene();
