@@ -17,5 +17,6 @@ public:
 	int bombAvailable;
 	int power;
 	Ogre::Vector2 pos;
+	Ogre::Vector2 destinationPos;
 };
 

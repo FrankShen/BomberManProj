@@ -37,8 +37,10 @@ public:
 	void createScene(void);
 
 	void askingPlayer(int playerType, int eventType);
+	void updatePlayerPos(void);
 
 	int thromBomb(PlayerClass player);
+	void updateBombInfo(const Ogre::FrameEvent& evt);
 
 private:
 	int bombIndex;

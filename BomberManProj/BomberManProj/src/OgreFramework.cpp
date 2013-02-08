@@ -192,6 +192,9 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 			if (mKeyboard->isKeyDown(OIS::KC_ESCAPE)){
 				mShutdown = true;
 			}
+
+			gameScene.updateBombInfo(evt);
+
 			if (mKeyboard->isKeyDown(OIS::KC_DOWN)){
 				if (!gameScene.nonNPCAnimState){
 					gameScene.askingPlayer(NON_NPC, EVENT_DOWN);
@@ -230,8 +233,10 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 				gameScene.isSpaceKeyDown = false;
 			}
 			if (gameScene.nonNPCAnimState)
-				if (!gameScene.nonNPCAnimState->hasEnded())
+				if (!gameScene.nonNPCAnimState->hasEnded()){
 					gameScene.nonNPCAnimState->addTime(evt.timeSinceLastFrame);
+					gameScene.updatePlayerPos();
+				}
 			break;
 		}
 	default:
