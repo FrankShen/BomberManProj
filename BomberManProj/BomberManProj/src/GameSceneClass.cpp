@@ -5,6 +5,8 @@ GameSceneClass::GameSceneClass(void)
 {
 	nonNPCAnimState = NULL;
 	NPCAnimState = NULL;
+	isSpaceKeyDown = false;
+	bombIndex = 0;
 }
 
 
@@ -15,7 +17,7 @@ GameSceneClass::~GameSceneClass(void)
 void GameSceneClass::initGameData(void)
 {
 	nonNPCPlayer.playerType = NON_NPC;
-	nonNPCPlayer.bombAvailable = 1;
+	nonNPCPlayer.bombAvailable = 5;
 	nonNPCPlayer.pos = map.nonNPCStartPos;
 	nonNPCPlayer.power = 1;
 
@@ -44,6 +46,7 @@ void GameSceneClass::createCamera(void)
 
 void GameSceneClass::createScene(void)
 {
+
 	Ogre::Entity* tempBoard = mSceneMgr->createEntity("boomb_tempboard", "boomb_tempboard.mesh");
 	tempBoard->setMaterialName("boomb_tempboard");
 	Ogre::SceneNode* tempBoardNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("boomb_tempboard");
@@ -54,14 +57,13 @@ void GameSceneClass::createScene(void)
 	tempBoardNode->setOrientation(q1*q2);
 	tempBoardNode->attachObject(tempBoard);
 
-	Ogre::Entity *destroyableBlock = mSceneMgr->createEntity("destroyableblock", "boomb_destroyableBlock.mesh");
-	destroyableBlock->setMaterialName("boomb_testDestroyable");
-	destroyableBlock->setCastShadows(true);
-
 	for (int x = 0; x < 15; ++x){
 		for (int y = 0; y < 13; ++y){
 			if (map.getMapAtPos(x, y) == MAP_DESTROYABLE)
 			{
+				Ogre::Entity *destroyableBlock = mSceneMgr->createEntity("destroyableblock", "boomb_destroyableBlock.mesh");
+				destroyableBlock->setMaterialName("boomb_testDestroyable");
+				destroyableBlock->setCastShadows(true);
 				mapNode[x][y] = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 				mapNode[x][y]->setPosition(0, 0, 0);
 				mapNode[x][y]->setPosition(getWorldCoord(Ogre::Vector2(x,y)));
@@ -257,4 +259,22 @@ Ogre::Vector3 GameSceneClass::getWorldCoord(Ogre::Vector2 pos)
 	rtn.x = GRID_SIZE*(pos.x - 7);
 	rtn.z = GRID_SIZE*(pos.y - 6);
 	return rtn;
+}
+
+int GameSceneClass::thromBomb(PlayerClass player)
+{
+	BombClass tempBomb;
+	tempBomb.bombType = NON_NPC_BOMB;
+	tempBomb.countDown = 3.0;
+	tempBomb.pos = nonNPCPlayer.pos;
+	tempBomb.power = nonNPCPlayer.power;
+	tempBomb.node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	tempBomb.node->setPosition(getWorldCoord(tempBomb.pos));
+	Ogre::Entity *bombEntity = mSceneMgr->createEntity("boomb_bomb.mesh");
+	bombEntity->setCastShadows(true);
+	tempBomb.node->attachObject(bombEntity);
+	bombPool.insert(std::pair<int, BombClass>(bombIndex++, tempBomb));
+	map.setMapAtPos(tempBomb.pos.x, tempBomb.pos.y, MAP_BOMB);
+	nonNPCPlayer.bombAvailable--;
+	return (bombIndex-1);
 }

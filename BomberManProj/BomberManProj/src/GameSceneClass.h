@@ -1,8 +1,9 @@
 #pragma once
 #include <Ogre.h>
+#include <map>
 #include "PlayerClass.h"
 #include "MapClass.h"
-
+#include "BombClass.h"
 #define GRID_SIZE 70
 #define DEFAULT_SPEED 0.5
 
@@ -26,6 +27,10 @@ public:
 	PlayerClass nonNPCPlayer;
 	PlayerClass NPCPlayer;
 
+	std::map<int, BombClass> bombPool;
+
+	bool isSpaceKeyDown;
+
 	void initGameData(void);
 	void createSceneMgr(Ogre::Root *_root);
 	void createCamera(void);
@@ -33,7 +38,10 @@ public:
 
 	void askingPlayer(int playerType, int eventType);
 
+	int thromBomb(PlayerClass player);
+
 private:
+	int bombIndex;
 	Ogre::Vector3 getWorldCoord(Ogre::Vector2 pos);
 	void movingPlayer(int playerType, Ogre::SceneNode *playerNode, Ogre::Vector3 direction, Ogre::AnimationState *animState);
 

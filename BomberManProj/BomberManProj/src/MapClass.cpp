@@ -16,7 +16,6 @@ MapClass::MapClass(void)
 	nonNPCStartPos.y = 4;
 	NPCStartPos.x = 14;
 	NPCStartPos.y = 12;
-	data[10][10] = MAP_DESTROYABLE;
 }
 
 
