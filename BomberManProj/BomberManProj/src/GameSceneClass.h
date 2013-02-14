@@ -5,7 +5,7 @@
 #include "MapClass.h"
 #include "BombClass.h"
 #define GRID_SIZE 70
-#define DEFAULT_SPEED 0.5
+#define DEFAULT_SPEED 0.3
 
 class GameSceneClass
 {
@@ -42,10 +42,12 @@ public:
 	int thromBomb(PlayerClass player);
 	void updateBombInfo(const Ogre::FrameEvent& evt);
 
+
 private:
 	int bombIndex;
 	Ogre::Vector3 getWorldCoord(Ogre::Vector2 pos);
 	void movingPlayer(int playerType, Ogre::SceneNode *playerNode, Ogre::Vector3 direction, Ogre::AnimationState *animState);
+	void calculateBombArea(BombClass &bomb);
 
 };
 

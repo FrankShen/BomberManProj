@@ -17,7 +17,7 @@ GameSceneClass::~GameSceneClass(void)
 void GameSceneClass::initGameData(void)
 {
 	nonNPCPlayer.playerType = NON_NPC;
-	nonNPCPlayer.bombAvailable = 5;
+	nonNPCPlayer.bombAvailable = 1;
 	nonNPCPlayer.pos = map.nonNPCStartPos;
 	nonNPCPlayer.power = 1;
 
@@ -61,13 +61,21 @@ void GameSceneClass::createScene(void)
 		for (int y = 0; y < 13; ++y){
 			if (map.getMapAtPos(x, y) == MAP_DESTROYABLE)
 			{
-				Ogre::Entity *destroyableBlock = mSceneMgr->createEntity("destroyableblock", "boomb_destroyableBlock.mesh");
+				Ogre::Entity *destroyableBlock = mSceneMgr->createEntity("boomb_destroyableBlock.mesh");
 				destroyableBlock->setMaterialName("boomb_testDestroyable");
 				destroyableBlock->setCastShadows(true);
 				mapNode[x][y] = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 				mapNode[x][y]->setPosition(0, 0, 0);
 				mapNode[x][y]->setPosition(getWorldCoord(Ogre::Vector2(x,y)));
 				mapNode[x][y]->attachObject(destroyableBlock);
+			} else if (map.getMapAtPos(x, y) == MAP_INDESTROYABLE){
+				Ogre::Entity *indestroyableBlock = mSceneMgr->createEntity("boomb_indestroyableBlock.mesh");
+				indestroyableBlock->setMaterialName("boomb_testInDestroyable");
+				indestroyableBlock->setCastShadows(true);
+				mapNode[x][y] = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+				mapNode[x][y]->setPosition(0, 0, 0);
+				mapNode[x][y]->setPosition(getWorldCoord(Ogre::Vector2(x,y)));
+				mapNode[x][y]->attachObject(indestroyableBlock);
 			}
 		}
 	}
@@ -79,13 +87,15 @@ void GameSceneClass::createScene(void)
 	nonNPCPlayerNode->attachObject(nonNPC);
 
 	// Set ambient light
-	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.4, 0.4, 0.4));
 	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
 	// Create a light
-	Ogre::Light* l = mSceneMgr->createLight("directlight");
-	l->setType(Ogre::Light::LT_DIRECTIONAL);
-	l->setDirection(Ogre::Vector3(-1, -1, -1));
+	Ogre::Light* l = mSceneMgr->createLight("pointlight");
+	l->setType(Ogre::Light::LT_POINT);
+	l->setPosition(Ogre::Vector3(0, 700, 0));
+	l->setDiffuseColour(1.0, 1.0, 1.0);
+	l->setSpecularColour(0.5, 0.5, 0.5);
 }
 
 void GameSceneClass::askingPlayer(int playerType, int eventType)
@@ -307,6 +317,11 @@ int GameSceneClass::thromBomb(PlayerClass player)
 	return (bombIndex-1);
 }
 
+void GameSceneClass::calculateBombArea(BombClass &bomb)
+{
+	bomb.bombType;
+}
+
 void GameSceneClass::updateBombInfo(const Ogre::FrameEvent& evt)
 {
 	for (std::map<int, BombClass>::iterator iter = bombPool.begin(); iter != bombPool.end();){
@@ -314,6 +329,7 @@ void GameSceneClass::updateBombInfo(const Ogre::FrameEvent& evt)
 		if (iter->second.countDown <= 0){
 			mSceneMgr->destroySceneNode(iter->second.node);
 			map.setMapAtPos(iter->second.pos.x, iter->second.pos.y, MAP_NONE);
+			calculateBombArea(iter->second);
 			if (iter->second.bombType == NON_NPC_BOMB){
 				nonNPCPlayer.bombAvailable++;
 			} else {
