@@ -28,11 +28,9 @@ MapClass::MapClass(void)
 				} else {
 					file >> data[i][j];
 					if (data[i][j] == MAP_NON_NPC){
-						data[i][j] = MAP_NONE;
 						nonNPCStartPos.x = i - 1;
 						nonNPCStartPos.y = j - 1;
 					} else if (data[i][j] == MAP_NPC){
-						data[i][j] = MAP_NONE;
 						NPCStartPos.x = i - 1;
 						NPCStartPos.y = j - 1;
 					}

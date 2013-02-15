@@ -223,7 +223,7 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 			if (mKeyboard->isKeyDown(OIS::KC_SPACE)){
 				if (!gameScene.isSpaceKeyDown){
 					if (gameScene.nonNPCPlayer.bombAvailable && 
-						gameScene.map.getMapAtPos(gameScene.nonNPCPlayer.pos.x, gameScene.nonNPCPlayer.pos.y) == MAP_NONE){
+						gameScene.map.getMapAtPos(gameScene.nonNPCPlayer.pos.x, gameScene.nonNPCPlayer.pos.y) <= 2){
 
 							gameScene.thromBomb(gameScene.nonNPCPlayer);
 					}
@@ -232,11 +232,19 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 			} else {
 				gameScene.isSpaceKeyDown = false;
 			}
-			if (gameScene.nonNPCAnimState)
+			gameScene.updatePlayerInfo(evt);
+			if (gameScene.nonNPCAnimState){
 				if (!gameScene.nonNPCAnimState->hasEnded()){
 					gameScene.nonNPCAnimState->addTime(evt.timeSinceLastFrame);
 					gameScene.updatePlayerPos();
 				}
+			} 
+			if (gameScene.NPCAnimState){
+				if (!gameScene.NPCAnimState->hasEnded()){
+					gameScene.NPCAnimState->addTime(evt.timeSinceLastFrame);
+					gameScene.updateNPCPlayerPos();
+				}
+			} 
 			break;
 		}
 	default:

@@ -17,14 +17,18 @@ GameSceneClass::~GameSceneClass(void)
 void GameSceneClass::initGameData(void)
 {
 	nonNPCPlayer.playerType = NON_NPC;
-	nonNPCPlayer.bombAvailable = 1;
+	nonNPCPlayer.bombAvailable = 5;
 	nonNPCPlayer.pos = map.nonNPCStartPos;
 	nonNPCPlayer.power = 1;
+	nonNPCPlayer.health = 3;
+	nonNPCPlayer.invincible = 0.0f;
 
 	NPCPlayer.playerType = NPC;
 	NPCPlayer.bombAvailable = 1;
 	NPCPlayer.pos = map.NPCStartPos;
 	NPCPlayer.power = 1;
+	NPCPlayer.health = 3;
+	NPCPlayer.invincible = 0.0f;
 }
 
 void GameSceneClass::createSceneMgr(Ogre::Root *_root)
@@ -106,7 +110,7 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 		{
 			if (playerType == NON_NPC){
 				int mapType = map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y - 1);
-				if (mapType == MAP_NONE){
+				if (mapType  <= 2){
 					if (nonNPCAnimState){
 						if (nonNPCAnimState->hasEnded()){
 							nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
@@ -121,7 +125,7 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 				} // else if
 			} else {
 				int mapType = map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y - 1);
-				if (mapType == MAP_NONE){
+				if (mapType  <= 2){
 					if (NPCAnimState){
 						if (NPCAnimState->hasEnded()){
 							NPCPlayer.destinationPos = NPCPlayer.pos;
@@ -141,7 +145,7 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 		{
 			if (playerType == NON_NPC){
 				int mapType = map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y + 1);
-				if (mapType == MAP_NONE){
+				if (mapType  <= 2){
 					if (nonNPCAnimState){
 						if (nonNPCAnimState->hasEnded()){
 							nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
@@ -156,7 +160,7 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 				} // else if
 			} else {
 				int mapType = map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y + 1);
-				if (mapType == MAP_NONE){
+				if (mapType  <= 2){
 					if (NPCAnimState){
 						if (NPCAnimState->hasEnded()){
 							NPCPlayer.destinationPos = NPCPlayer.pos;
@@ -176,7 +180,7 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 		{
 			if (playerType == NON_NPC){
 				int mapType = map.getMapAtPos(nonNPCPlayer.pos.x - 1, nonNPCPlayer.pos.y);
-				if (mapType == MAP_NONE){
+				if (mapType  <= 2){
 					if (nonNPCAnimState){
 						if (nonNPCAnimState->hasEnded()){
 							nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
@@ -191,7 +195,7 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 				} // else if
 			} else {
 				int mapType = map.getMapAtPos(NPCPlayer.pos.x - 1, NPCPlayer.pos.y);
-				if (mapType == MAP_NONE){
+				if (mapType  <= 2){
 					if (NPCAnimState){
 						if (NPCAnimState->hasEnded()){
 							NPCPlayer.destinationPos = NPCPlayer.pos;
@@ -211,7 +215,7 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 		{
 			if (playerType == NON_NPC){
 				int mapType = map.getMapAtPos(nonNPCPlayer.pos.x + 1, nonNPCPlayer.pos.y);
-				if (mapType == MAP_NONE){
+				if (mapType  <= 2){
 					if (nonNPCAnimState){
 						if (nonNPCAnimState->hasEnded()){
 							nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
@@ -226,7 +230,7 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 				} // else if
 			} else {
 				int mapType = map.getMapAtPos(NPCPlayer.pos.x + 1, NPCPlayer.pos.y);
-				if (mapType == MAP_NONE){
+				if (mapType  <= 2){
 					if (NPCAnimState){
 						if (NPCAnimState->hasEnded()){
 							NPCPlayer.destinationPos = NPCPlayer.pos;
@@ -281,13 +285,21 @@ void GameSceneClass::movingPlayer(int playerType, Ogre::SceneNode *playerNode, O
 void GameSceneClass::updatePlayerPos(void)
 {
 	if (nonNPCAnimState->getTimePosition() >= DEFAULT_SPEED/2){
+		if (map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y) != MAP_BOMB)
+			map.setMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y, MAP_NONE);
 		nonNPCPlayer.pos = nonNPCPlayer.destinationPos;
+		map.setMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y, MAP_NON_NPC);
 	}
-	/*
+}
+
+void GameSceneClass::updateNPCPlayerPos(void)
+{
 	if (NPCAnimState->getTimePosition() >= DEFAULT_SPEED/2){
+		if (map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y) != MAP_BOMB)
+			map.setMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y, MAP_NONE);
 		NPCPlayer.pos = NPCPlayer.destinationPos;
+		map.setMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y, MAP_NPC);
 	}
-	*/
 }
 
 Ogre::Vector3 GameSceneClass::getWorldCoord(Ogre::Vector2 pos)
@@ -299,27 +311,179 @@ Ogre::Vector3 GameSceneClass::getWorldCoord(Ogre::Vector2 pos)
 	return rtn;
 }
 
-int GameSceneClass::thromBomb(PlayerClass player)
+int GameSceneClass::thromBomb(PlayerClass &player)
 {
 	BombClass tempBomb;
-	tempBomb.bombType = NON_NPC_BOMB;
+	if (player.playerType == NON_NPC)
+		tempBomb.bombType = NON_NPC_BOMB;
+	else
+		tempBomb.bombType = NPC_BOME;
 	tempBomb.countDown = 3.0;
-	tempBomb.pos = nonNPCPlayer.pos;
-	tempBomb.power = nonNPCPlayer.power;
+	tempBomb.pos = player.pos;
+	tempBomb.power = player.power;
 	tempBomb.node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	tempBomb.node->setPosition(getWorldCoord(tempBomb.pos));
 	Ogre::Entity *bombEntity = mSceneMgr->createEntity("boomb_bomb.mesh");
 	bombEntity->setCastShadows(true);
 	tempBomb.node->attachObject(bombEntity);
+	int x = tempBomb.pos.x;
+	int y = tempBomb.pos.y;
+	tempBomb.bombIdx = bombIndex;
+	mapNode[x][y] = tempBomb.node;
 	bombPool.insert(std::pair<int, BombClass>(bombIndex++, tempBomb));
 	map.setMapAtPos(tempBomb.pos.x, tempBomb.pos.y, MAP_BOMB);
-	nonNPCPlayer.bombAvailable--;
+	player.bombAvailable--;
 	return (bombIndex-1);
+}
+
+void GameSceneClass::explodeBomb(int bombIdx)
+{
+	std::map<int, BombClass>::iterator iter = bombPool.find(bombIdx);
+
+	mSceneMgr->destroySceneNode(iter->second.node);
+	map.setMapAtPos(iter->second.pos.x, iter->second.pos.y, MAP_NONE);
+
+	calculateBombArea(iter->second);
+
+	if (iter->second.bombType == NON_NPC_BOMB){
+		nonNPCPlayer.bombAvailable++;
+	} else {
+		NPCPlayer.bombAvailable++;
+	}
+	bombPool.erase(iter);
 }
 
 void GameSceneClass::calculateBombArea(BombClass &bomb)
 {
-	bomb.bombType;
+	// middle
+	if (nonNPCPlayer.pos == bomb.pos){
+		if (nonNPCPlayer.invincible <= 0){
+			nonNPCPlayer.invincible = 3.0f;
+			nonNPCPlayer.health--;
+		}
+	}
+	if (NPCPlayer.pos == bomb.pos){
+		if (NPCPlayer.invincible <= 0){
+			NPCPlayer.invincible = 3.0f;
+			NPCPlayer.health--;
+		}
+	}
+	// DOWN
+	for (int i = 1; i <= bomb.power; ++i){
+		if (map.getMapAtPos(bomb.pos.x, bomb.pos.y+i) == MAP_INDESTROYABLE){
+			break;
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y+i) == MAP_DESTROYABLE){
+			int x = bomb.pos.x;
+			int y = bomb.pos.y+i;
+			mSceneMgr->destroySceneNode(mapNode[x][y]);
+			map.setMapAtPos(bomb.pos.x, bomb.pos.y+i, MAP_NONE);
+			break;
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y+i) == MAP_NON_NPC){
+			if (nonNPCPlayer.invincible <= 0){
+				nonNPCPlayer.invincible = 3.0f;
+				nonNPCPlayer.health--;
+			}
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y+i) == MAP_NPC){
+			if (NPCPlayer.invincible <= 0){
+				NPCPlayer.invincible = 3.0f;
+				NPCPlayer.health--;
+			}
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y+i) == MAP_BOMB){
+			for (std::map<int, BombClass>::iterator iter = bombPool.begin(); iter != bombPool.end(); ++iter){
+				if(iter->second.pos.x == bomb.pos.x && iter->second.pos.y == bomb.pos.y+i){
+					explodeBomb(iter->first);
+					break;
+				}
+			}
+		}
+	}
+	// UP
+	for (int i = 1; i <= bomb.power; ++i){
+		if (map.getMapAtPos(bomb.pos.x, bomb.pos.y-i) == MAP_INDESTROYABLE){
+			break;
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y-i) == MAP_DESTROYABLE){
+			int x = bomb.pos.x;
+			int y = bomb.pos.y-i;
+			mSceneMgr->destroySceneNode(mapNode[x][y]);
+			map.setMapAtPos(bomb.pos.x, bomb.pos.y-i, MAP_NONE);
+			break;
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y-i) == MAP_NON_NPC){
+			if (nonNPCPlayer.invincible <= 0){
+				nonNPCPlayer.invincible = 3.0f;
+				nonNPCPlayer.health--;
+			}
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y-i) == MAP_NPC){
+			if (NPCPlayer.invincible <= 0){
+				NPCPlayer.invincible = 3.0f;
+				NPCPlayer.health--;
+			}
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y-i) == MAP_BOMB){
+			for (std::map<int, BombClass>::iterator iter = bombPool.begin(); iter != bombPool.end(); ++iter){
+				if(iter->second.pos.x == bomb.pos.x && iter->second.pos.y == bomb.pos.y-i){
+					explodeBomb(iter->first);
+					break;
+				}
+			}
+		}
+	}
+	// RIGHT
+	for (int i = 1; i <= bomb.power; ++i){
+		if (map.getMapAtPos(bomb.pos.x+i, bomb.pos.y) == MAP_INDESTROYABLE){
+			break;
+		} else if (map.getMapAtPos(bomb.pos.x+i, bomb.pos.y) == MAP_DESTROYABLE){
+			int x = bomb.pos.x+i;
+			int y = bomb.pos.y;
+			mSceneMgr->destroySceneNode(mapNode[x][y]);
+			map.setMapAtPos(bomb.pos.x+i, bomb.pos.y, MAP_NONE);
+			break;
+		} else if (map.getMapAtPos(bomb.pos.x+i, bomb.pos.y) == MAP_NON_NPC){
+			if (nonNPCPlayer.invincible <= 0){
+				nonNPCPlayer.invincible = 3.0f;
+				nonNPCPlayer.health--;
+			}
+		} else if (map.getMapAtPos(bomb.pos.x+i, bomb.pos.y) == MAP_NPC){
+			if (NPCPlayer.invincible <= 0){
+				NPCPlayer.invincible = 3.0f;
+				NPCPlayer.health--;
+			}
+		} else if (map.getMapAtPos(bomb.pos.x+i, bomb.pos.y) == MAP_BOMB){
+			for (std::map<int, BombClass>::iterator iter = bombPool.begin(); iter != bombPool.end(); ++iter){
+				if(iter->second.pos.x == bomb.pos.x+i && iter->second.pos.y == bomb.pos.y){
+					explodeBomb(iter->first);
+					break;
+				}
+			}
+		}
+	}
+	// LEFT
+	for (int i = 1; i <= bomb.power; ++i){
+		if (map.getMapAtPos(bomb.pos.x-i, bomb.pos.y) == MAP_INDESTROYABLE){
+			break;
+		} else if (map.getMapAtPos(bomb.pos.x-i, bomb.pos.y) == MAP_DESTROYABLE){
+			int x = bomb.pos.x-i;
+			int y = bomb.pos.y;
+			mSceneMgr->destroySceneNode(mapNode[x][y]);
+			map.setMapAtPos(bomb.pos.x-i, bomb.pos.y, MAP_NONE);
+			break;
+		} else if (map.getMapAtPos(bomb.pos.x-i, bomb.pos.y) == MAP_NON_NPC){
+			if (nonNPCPlayer.invincible <= 0){
+				nonNPCPlayer.invincible = 3.0f;
+				nonNPCPlayer.health--;
+			}
+		} else if (map.getMapAtPos(bomb.pos.x-i, bomb.pos.y) == MAP_NPC){
+			if (NPCPlayer.invincible <= 0){
+				NPCPlayer.invincible = 3.0f;
+				NPCPlayer.health--;
+			}
+		} else if (map.getMapAtPos(bomb.pos.x-i, bomb.pos.y) == MAP_BOMB){
+			for (std::map<int, BombClass>::iterator iter = bombPool.begin(); iter != bombPool.end(); ++iter){
+				if(iter->second.pos.x == bomb.pos.x-i && iter->second.pos.y == bomb.pos.y){
+					explodeBomb(iter->first);
+					break;
+				}
+			}
+		}
+	}
 }
 
 void GameSceneClass::updateBombInfo(const Ogre::FrameEvent& evt)
@@ -327,17 +491,29 @@ void GameSceneClass::updateBombInfo(const Ogre::FrameEvent& evt)
 	for (std::map<int, BombClass>::iterator iter = bombPool.begin(); iter != bombPool.end();){
 		iter->second.countDown-=evt.timeSinceLastFrame;
 		if (iter->second.countDown <= 0){
-			mSceneMgr->destroySceneNode(iter->second.node);
-			map.setMapAtPos(iter->second.pos.x, iter->second.pos.y, MAP_NONE);
-			calculateBombArea(iter->second);
-			if (iter->second.bombType == NON_NPC_BOMB){
-				nonNPCPlayer.bombAvailable++;
-			} else {
-				NPCPlayer.bombAvailable++;
-			}
-			bombPool.erase(iter++);
+			std::map<int, BombClass>::iterator tempIter = iter;
+			explodeBomb(tempIter->first);
+			break;
 		} else {
-			++iter;
+			iter++;
 		}
+	}
+}
+
+void GameSceneClass::updatePlayerInfo(const Ogre::FrameEvent& evt)
+{
+	if (NPCPlayer.invincible > 0){
+		NPCPlayer.invincible -= evt.timeSinceLastFrame;
+	}
+	if (NPCPlayer.health <= 0){
+		//.....
+		// loser!
+	}
+	if (nonNPCPlayer.invincible > 0){
+		nonNPCPlayer.invincible -= evt.timeSinceLastFrame;
+	}
+	if (nonNPCPlayer.health <= 0){
+		//....
+		// loser!
 	}
 }

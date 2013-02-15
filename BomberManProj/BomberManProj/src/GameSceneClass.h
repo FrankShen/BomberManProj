@@ -38,16 +38,19 @@ public:
 
 	void askingPlayer(int playerType, int eventType);
 	void updatePlayerPos(void);
+	void updateNPCPlayerPos(void);
 
-	int thromBomb(PlayerClass player);
+	int thromBomb(PlayerClass &player);
 	void updateBombInfo(const Ogre::FrameEvent& evt);
 
+	void updatePlayerInfo(const Ogre::FrameEvent& evt);
 
 private:
 	int bombIndex;
 	Ogre::Vector3 getWorldCoord(Ogre::Vector2 pos);
 	void movingPlayer(int playerType, Ogre::SceneNode *playerNode, Ogre::Vector3 direction, Ogre::AnimationState *animState);
 	void calculateBombArea(BombClass &bomb);
+	void explodeBomb(int bombIdx);
 
 };
 

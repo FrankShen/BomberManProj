@@ -10,6 +10,7 @@ public:
 	
 	Ogre::SceneNode *node;
 
+	int bombIdx;
 	int bombType;
 	int power;
 	float countDown;

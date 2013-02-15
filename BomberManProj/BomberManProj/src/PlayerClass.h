@@ -16,6 +16,8 @@ public:
 	int playerType;
 	int bombAvailable;
 	int power;
+	int health;
+	float invincible;
 	Ogre::Vector2 pos;
 	Ogre::Vector2 destinationPos;
 };
