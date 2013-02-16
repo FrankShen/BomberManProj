@@ -1,4 +1,8 @@
 #pragma once
+#define MAP_ADD_HEALTH -4
+#define MAP_ADD_SPEED -3
+#define MAP_ADD_POWER -2
+#define MAP_ADD_BOMB -1
 #define MAP_NONE 0
 #define MAP_NPC 1
 #define MAP_NON_NPC 2

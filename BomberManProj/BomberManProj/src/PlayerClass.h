@@ -18,6 +18,7 @@ public:
 	int power;
 	int health;
 	float invincible;
+	float speed;
 	Ogre::Vector2 pos;
 	Ogre::Vector2 destinationPos;
 };

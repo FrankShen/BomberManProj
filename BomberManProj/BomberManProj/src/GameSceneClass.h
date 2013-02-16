@@ -48,9 +48,10 @@ public:
 private:
 	int bombIndex;
 	Ogre::Vector3 getWorldCoord(Ogre::Vector2 pos);
-	void movingPlayer(int playerType, Ogre::SceneNode *playerNode, Ogre::Vector3 direction, Ogre::AnimationState *animState);
+	void movingPlayer(int playerType, float speed, Ogre::SceneNode *playerNode, Ogre::Vector3 direction, Ogre::AnimationState *animState);
 	void calculateBombArea(BombClass &bomb);
 	void explodeBomb(int bombIdx);
+	void addBonus(Ogre::Vector2 pos);
 
 };
 

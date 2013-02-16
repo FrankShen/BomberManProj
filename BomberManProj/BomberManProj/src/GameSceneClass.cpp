@@ -17,11 +17,12 @@ GameSceneClass::~GameSceneClass(void)
 void GameSceneClass::initGameData(void)
 {
 	nonNPCPlayer.playerType = NON_NPC;
-	nonNPCPlayer.bombAvailable = 5;
+	nonNPCPlayer.bombAvailable = 1;
 	nonNPCPlayer.pos = map.nonNPCStartPos;
 	nonNPCPlayer.power = 1;
 	nonNPCPlayer.health = 3;
 	nonNPCPlayer.invincible = 0.0f;
+	nonNPCPlayer.speed = 0.3f;
 
 	NPCPlayer.playerType = NPC;
 	NPCPlayer.bombAvailable = 1;
@@ -29,6 +30,7 @@ void GameSceneClass::initGameData(void)
 	NPCPlayer.power = 1;
 	NPCPlayer.health = 3;
 	NPCPlayer.invincible = 0.0f;
+	NPCPlayer.speed = 0.3f;
 }
 
 void GameSceneClass::createSceneMgr(Ogre::Root *_root)
@@ -115,12 +117,12 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 						if (nonNPCAnimState->hasEnded()){
 							nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
 							nonNPCPlayer.destinationPos.y--;
-							movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), nonNPCAnimState);
+							movingPlayer(NON_NPC, nonNPCPlayer.speed, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), nonNPCAnimState);
 						}
 					} else {
 						nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
 						nonNPCPlayer.destinationPos.y--;
-						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), nonNPCAnimState);
+						movingPlayer(NON_NPC, nonNPCPlayer.speed, nonNPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), nonNPCAnimState);
 					}
 				} // else if
 			} else {
@@ -130,12 +132,12 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 						if (NPCAnimState->hasEnded()){
 							NPCPlayer.destinationPos = NPCPlayer.pos;
 							NPCPlayer.destinationPos.y--;
-							movingPlayer(NPC, NPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
+							movingPlayer(NPC, NPCPlayer.speed, NPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
 						}
 					} else {
 						NPCPlayer.destinationPos = NPCPlayer.pos;
 						NPCPlayer.destinationPos.y--;
-						movingPlayer(NPC, NPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
+						movingPlayer(NPC, NPCPlayer.speed, NPCPlayerNode, Ogre::Vector3(0, 0, -GRID_SIZE), NPCAnimState);
 					}
 				} // else if
 			}
@@ -150,12 +152,12 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 						if (nonNPCAnimState->hasEnded()){
 							nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
 							nonNPCPlayer.destinationPos.y++;
-							movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), nonNPCAnimState);
+							movingPlayer(NON_NPC, nonNPCPlayer.speed, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), nonNPCAnimState);
 						}
 					} else {
 						nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
 						nonNPCPlayer.destinationPos.y++;
-						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), nonNPCAnimState);
+						movingPlayer(NON_NPC, nonNPCPlayer.speed, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), nonNPCAnimState);
 					}
 				} // else if
 			} else {
@@ -165,12 +167,12 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 						if (NPCAnimState->hasEnded()){
 							NPCPlayer.destinationPos = NPCPlayer.pos;
 							NPCPlayer.destinationPos.y++;
-							movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
+							movingPlayer(NPC, NPCPlayer.speed, NPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
 						}
 					} else {
 						NPCPlayer.destinationPos = NPCPlayer.pos;
 						NPCPlayer.destinationPos.y++;
-						movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
+						movingPlayer(NPC, NPCPlayer.speed, NPCPlayerNode, Ogre::Vector3(0, 0, GRID_SIZE), NPCAnimState);
 					}
 				} // else if
 			}
@@ -185,12 +187,12 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 						if (nonNPCAnimState->hasEnded()){
 							nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
 							nonNPCPlayer.destinationPos.x--;
-							movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), nonNPCAnimState);
+							movingPlayer(NON_NPC, nonNPCPlayer.speed, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), nonNPCAnimState);
 						}
 					} else {
 						nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
 						nonNPCPlayer.destinationPos.x--;
-						movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), nonNPCAnimState);
+						movingPlayer(NON_NPC, nonNPCPlayer.speed, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), nonNPCAnimState);
 					}
 				} // else if
 			} else {
@@ -200,12 +202,12 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 						if (NPCAnimState->hasEnded()){
 							NPCPlayer.destinationPos = NPCPlayer.pos;
 							NPCPlayer.destinationPos.x--;
-							movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
+							movingPlayer(NPC, NPCPlayer.speed, NPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
 						}
 					} else {
 						NPCPlayer.destinationPos = NPCPlayer.pos;
 						NPCPlayer.destinationPos.x--;
-						movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
+						movingPlayer(NPC, NPCPlayer.speed, NPCPlayerNode, Ogre::Vector3(-GRID_SIZE, 0, 0), NPCAnimState);
 					}
 				} // else if
 			}
@@ -220,12 +222,12 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 						if (nonNPCAnimState->hasEnded()){
 							nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
 							nonNPCPlayer.destinationPos.x++;
-							movingPlayer(NON_NPC, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
+							movingPlayer(NON_NPC, nonNPCPlayer.speed, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
 						}
 					} else {
 						nonNPCPlayer.destinationPos = nonNPCPlayer.pos;
 						nonNPCPlayer.destinationPos.x++;
-						movingPlayer(NON_NPC,nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
+						movingPlayer(NON_NPC, nonNPCPlayer.speed, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), nonNPCAnimState);
 					}
 				} // else if
 			} else {
@@ -235,12 +237,12 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 						if (NPCAnimState->hasEnded()){
 							NPCPlayer.destinationPos = NPCPlayer.pos;
 							NPCPlayer.destinationPos.x++;
-							movingPlayer(NPC, nonNPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
+							movingPlayer(NPC, NPCPlayer.speed, NPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
 						}
 					} else {
 						NPCPlayer.destinationPos = NPCPlayer.pos;
 						NPCPlayer.destinationPos.x++;
-						movingPlayer(NPC,NPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
+						movingPlayer(NPC, NPCPlayer.speed, NPCPlayerNode, Ogre::Vector3(GRID_SIZE, 0, 0), NPCAnimState);
 					}
 				} // else if
 			}
@@ -251,21 +253,21 @@ void GameSceneClass::askingPlayer(int playerType, int eventType)
 	}
 }
 
-void GameSceneClass::movingPlayer(int playerType, Ogre::SceneNode *playerNode, Ogre::Vector3 direction,	Ogre::AnimationState *animState)
+void GameSceneClass::movingPlayer(int playerType, float speed, Ogre::SceneNode *playerNode, Ogre::Vector3 direction,	Ogre::AnimationState *animState)
 {
 	Ogre::Animation *anim;
 	if (playerType == NON_NPC){
 		if (animState){
 			mSceneMgr->destroyAnimation("nonnpcmoving");
 		}
-		anim = mSceneMgr->createAnimation("nonnpcmoving", DEFAULT_SPEED);
+		anim = mSceneMgr->createAnimation("nonnpcmoving", speed);
 		nonNPCAnimState = mSceneMgr->createAnimationState("nonnpcmoving");
 		animState = nonNPCAnimState;
 	} else {
 		if (animState){
 			mSceneMgr->destroyAnimation("npcmoving");
 		}
-		anim = mSceneMgr->createAnimation("npcmoving", DEFAULT_SPEED);
+		anim = mSceneMgr->createAnimation("npcmoving", speed);
 		NPCAnimState = mSceneMgr->createAnimationState("npcmoving");
 		animState = NPCAnimState;
 	}
@@ -274,7 +276,7 @@ void GameSceneClass::movingPlayer(int playerType, Ogre::SceneNode *playerNode, O
 	Ogre::TransformKeyFrame *key = track->createNodeKeyFrame(0);
 	Ogre::Vector3 currentPos = playerNode->getPosition();
 	key->setTranslate(currentPos);
-	key = track->createNodeKeyFrame(DEFAULT_SPEED);
+	key = track->createNodeKeyFrame(speed);
 	currentPos += direction;
 	key->setTranslate(currentPos);
 
@@ -284,20 +286,50 @@ void GameSceneClass::movingPlayer(int playerType, Ogre::SceneNode *playerNode, O
 
 void GameSceneClass::updatePlayerPos(void)
 {
-	if (nonNPCAnimState->getTimePosition() >= DEFAULT_SPEED/2){
+	if (nonNPCAnimState->getTimePosition() >= nonNPCPlayer.speed/2){
 		if (map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y) != MAP_BOMB)
 			map.setMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y, MAP_NONE);
 		nonNPCPlayer.pos = nonNPCPlayer.destinationPos;
+		if (map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y) < 0){
+			if (map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y) == MAP_ADD_BOMB){
+				nonNPCPlayer.bombAvailable++;
+			} else if (map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y) == MAP_ADD_POWER){
+				nonNPCPlayer.power++;
+			} else if (map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y) == MAP_ADD_SPEED){
+				nonNPCPlayer.speed *= 0.6;
+			} else if (map.getMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y) == MAP_ADD_HEALTH){
+				if (nonNPCPlayer.health < 3)
+					nonNPCPlayer.health++;
+			}
+			int x = nonNPCPlayer.pos.x;
+			int y = nonNPCPlayer.pos.y;
+			//mSceneMgr->destroySceneNode(mapNode[x][y]);
+		}
 		map.setMapAtPos(nonNPCPlayer.pos.x, nonNPCPlayer.pos.y, MAP_NON_NPC);
 	}
 }
 
 void GameSceneClass::updateNPCPlayerPos(void)
 {
-	if (NPCAnimState->getTimePosition() >= DEFAULT_SPEED/2){
+	if (NPCAnimState->getTimePosition() >= NPCPlayer.speed/2){
 		if (map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y) != MAP_BOMB)
 			map.setMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y, MAP_NONE);
 		NPCPlayer.pos = NPCPlayer.destinationPos;
+		if (map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y) < 0){
+			if (map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y) == MAP_ADD_BOMB){
+				NPCPlayer.bombAvailable++;
+			} else if (map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y) == MAP_ADD_POWER){
+				NPCPlayer.power++;
+			} else if (map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y) == MAP_ADD_SPEED){
+				NPCPlayer.speed *= 0.6;
+			} else if (map.getMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y) == MAP_ADD_HEALTH){
+				if (NPCPlayer.health < 3)
+					NPCPlayer.health++;
+			}
+			int x = NPCPlayer.pos.x;
+			int y = NPCPlayer.pos.y;
+			//mSceneMgr->destroySceneNode(mapNode[x][y]);
+		}
 		map.setMapAtPos(NPCPlayer.pos.x, NPCPlayer.pos.y, MAP_NPC);
 	}
 }
@@ -377,6 +409,7 @@ void GameSceneClass::calculateBombArea(BombClass &bomb)
 			int y = bomb.pos.y+i;
 			mSceneMgr->destroySceneNode(mapNode[x][y]);
 			map.setMapAtPos(bomb.pos.x, bomb.pos.y+i, MAP_NONE);
+			addBonus(Ogre::Vector2(x,y));
 			break;
 		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y+i) == MAP_NON_NPC){
 			if (nonNPCPlayer.invincible <= 0){
@@ -395,6 +428,11 @@ void GameSceneClass::calculateBombArea(BombClass &bomb)
 					break;
 				}
 			}
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y+i) < 0){
+			int x = bomb.pos.x;
+			int y = bomb.pos.y+i;
+			mSceneMgr->destroySceneNode(mapNode[x][y]);
+			map.setMapAtPos(x, y, MAP_NONE);
 		}
 	}
 	// UP
@@ -406,6 +444,7 @@ void GameSceneClass::calculateBombArea(BombClass &bomb)
 			int y = bomb.pos.y-i;
 			mSceneMgr->destroySceneNode(mapNode[x][y]);
 			map.setMapAtPos(bomb.pos.x, bomb.pos.y-i, MAP_NONE);
+			addBonus(Ogre::Vector2(x,y));
 			break;
 		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y-i) == MAP_NON_NPC){
 			if (nonNPCPlayer.invincible <= 0){
@@ -424,6 +463,11 @@ void GameSceneClass::calculateBombArea(BombClass &bomb)
 					break;
 				}
 			}
+		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y-i) < 0){
+			int x = bomb.pos.x;
+			int y = bomb.pos.y-i;
+			mSceneMgr->destroySceneNode(mapNode[x][y]);
+			map.setMapAtPos(x, y, MAP_NONE);
 		}
 	}
 	// RIGHT
@@ -435,6 +479,7 @@ void GameSceneClass::calculateBombArea(BombClass &bomb)
 			int y = bomb.pos.y;
 			mSceneMgr->destroySceneNode(mapNode[x][y]);
 			map.setMapAtPos(bomb.pos.x+i, bomb.pos.y, MAP_NONE);
+			addBonus(Ogre::Vector2(x,y));
 			break;
 		} else if (map.getMapAtPos(bomb.pos.x+i, bomb.pos.y) == MAP_NON_NPC){
 			if (nonNPCPlayer.invincible <= 0){
@@ -453,6 +498,11 @@ void GameSceneClass::calculateBombArea(BombClass &bomb)
 					break;
 				}
 			}
+		} else if (map.getMapAtPos(bomb.pos.x+i, bomb.pos.y) < 0){
+			int x = bomb.pos.x+i;
+			int y = bomb.pos.y;
+			mSceneMgr->destroySceneNode(mapNode[x][y]);
+			map.setMapAtPos(x, y, MAP_NONE);
 		}
 	}
 	// LEFT
@@ -464,6 +514,7 @@ void GameSceneClass::calculateBombArea(BombClass &bomb)
 			int y = bomb.pos.y;
 			mSceneMgr->destroySceneNode(mapNode[x][y]);
 			map.setMapAtPos(bomb.pos.x-i, bomb.pos.y, MAP_NONE);
+			addBonus(Ogre::Vector2(x,y));
 			break;
 		} else if (map.getMapAtPos(bomb.pos.x-i, bomb.pos.y) == MAP_NON_NPC){
 			if (nonNPCPlayer.invincible <= 0){
@@ -482,6 +533,11 @@ void GameSceneClass::calculateBombArea(BombClass &bomb)
 					break;
 				}
 			}
+		} else if (map.getMapAtPos(bomb.pos.x-i, bomb.pos.y) < 0){
+			int x = bomb.pos.x-i;
+			int y = bomb.pos.y;
+			mSceneMgr->destroySceneNode(mapNode[x][y]);
+			map.setMapAtPos(x, y, MAP_NONE);
 		}
 	}
 }
@@ -515,5 +571,25 @@ void GameSceneClass::updatePlayerInfo(const Ogre::FrameEvent& evt)
 	if (nonNPCPlayer.health <= 0){
 		//....
 		// loser!
+	}
+}
+
+void GameSceneClass::addBonus(Ogre::Vector2 pos)
+{
+	int x = pos.x;
+	int y = pos.y;
+	int randResult = rand()%11;
+	if (randResult <= 1){
+		map.setMapAtPos(x, y, MAP_ADD_BOMB);
+		//..
+	} else if (randResult <= 3){
+		map.setMapAtPos(x, y, MAP_ADD_POWER);
+		//..
+	} else if (randResult <= 5){
+		map.setMapAtPos(x, y, MAP_ADD_SPEED);
+		//..
+	} else if (randResult <= 6){
+		map.setMapAtPos(x, y, MAP_ADD_HEALTH);
+		//..
 	}
 }
