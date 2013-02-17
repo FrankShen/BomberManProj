@@ -2,6 +2,7 @@
 #include <Ogre.h>
 #include <map>
 #include "PlayerClass.h"
+#include "AIBrainClass.h"
 #include "MapClass.h"
 #include "BombClass.h"
 #define GRID_SIZE 70
@@ -26,6 +27,8 @@ public:
 	MapClass map;
 	PlayerClass nonNPCPlayer;
 	PlayerClass NPCPlayer;
+
+	AIBrainClass aiBrain;
 
 	std::map<int, BombClass> bombPool;
 

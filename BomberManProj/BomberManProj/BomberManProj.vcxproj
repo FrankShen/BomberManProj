@@ -53,10 +53,11 @@
       <AdditionalIncludeDirectories>$(OGRE_HOME)\include;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\Samples\Common\include;$(OGRE_HOME)\boost</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OGRE_HOME)\lib\$(Configuration);$(OGRE_HOME)\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;OgreRTShaderSystem_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>WinMain</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_HOME)\Bin\$(Configuration)"</Command>
@@ -86,6 +87,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\AIBrainClass.cpp" />
     <ClCompile Include="src\BombClass.cpp" />
     <ClCompile Include="src\GameSceneClass.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -95,6 +97,7 @@
     <ClCompile Include="src\PlayerClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AIBrainClass.h" />
     <ClInclude Include="src\BombClass.h" />
     <ClInclude Include="src\GameSceneClass.h" />
     <ClInclude Include="src\MapClass.h" />

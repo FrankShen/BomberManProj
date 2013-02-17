@@ -18,6 +18,7 @@ extern "C" {
 		OgreFramework ogreFW;
 
 		try {
+			//AllocConsole();
 			ogreFW.initOgre();
 		} catch( Ogre::Exception& e ) {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

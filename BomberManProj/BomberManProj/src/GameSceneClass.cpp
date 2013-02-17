@@ -92,6 +92,12 @@ void GameSceneClass::createScene(void)
 	nonNPCPlayerNode->setPosition(getWorldCoord(nonNPCPlayer.pos));
 	nonNPCPlayerNode->attachObject(nonNPC);
 
+	Ogre::Entity *npc = mSceneMgr->createEntity("npcplayer", "ogrehead.mesh");
+	npc->setCastShadows(true);
+	NPCPlayerNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("npcplayerNode");
+	NPCPlayerNode->setPosition(getWorldCoord(NPCPlayer.pos));
+	NPCPlayerNode->attachObject(npc);
+
 	// Set ambient light
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.4, 0.4, 0.4));
 	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);

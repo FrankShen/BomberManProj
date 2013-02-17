@@ -195,6 +195,30 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 
 			gameScene.updateBombInfo(evt);
 
+			if (!gameScene.NPCAnimState){
+				int npcNextEvent = gameScene.aiBrain.calculateNPCNextEvent(gameScene.nonNPCPlayer, gameScene.NPCPlayer, gameScene.map);
+				if (npcNextEvent == AI_DOWN){
+					gameScene.askingPlayer(NPC, EVENT_DOWN);
+				} else if (npcNextEvent == AI_UP){
+					gameScene.askingPlayer(NPC, EVENT_UP);
+				} else if (npcNextEvent == AI_LEFT){
+					gameScene.askingPlayer(NPC, EVENT_LEFT);
+				} else if (npcNextEvent == AI_RIGHT){
+					gameScene.askingPlayer(NPC, EVENT_RIGHT);
+				}
+			} else if (gameScene.NPCAnimState->hasEnded()){
+				int npcNextEvent = gameScene.aiBrain.calculateNPCNextEvent(gameScene.nonNPCPlayer, gameScene.NPCPlayer, gameScene.map);
+				if (npcNextEvent == AI_DOWN){
+					gameScene.askingPlayer(NPC, EVENT_DOWN);
+				} else if (npcNextEvent == AI_UP){
+					gameScene.askingPlayer(NPC, EVENT_UP);
+				} else if (npcNextEvent == AI_LEFT){
+					gameScene.askingPlayer(NPC, EVENT_LEFT);
+				} else if (npcNextEvent == AI_RIGHT){
+					gameScene.askingPlayer(NPC, EVENT_RIGHT);
+				}
+			}
+
 			if (mKeyboard->isKeyDown(OIS::KC_DOWN)){
 				if (!gameScene.nonNPCAnimState){
 					gameScene.askingPlayer(NON_NPC, EVENT_DOWN);
@@ -213,12 +237,18 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 				} else if (gameScene.nonNPCAnimState->hasEnded()){
 					gameScene.askingPlayer(NON_NPC, EVENT_LEFT);
 				}
+
+
+
 			} else if (mKeyboard->isKeyDown(OIS::KC_RIGHT)){
 				if (!gameScene.nonNPCAnimState){
 					gameScene.askingPlayer(NON_NPC, EVENT_RIGHT);
 				} else if (gameScene.nonNPCAnimState->hasEnded()){
 					gameScene.askingPlayer(NON_NPC, EVENT_RIGHT);
 				}
+
+
+
 			}
 			if (mKeyboard->isKeyDown(OIS::KC_SPACE)){
 				if (!gameScene.isSpaceKeyDown){
