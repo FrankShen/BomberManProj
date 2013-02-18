@@ -5,10 +5,7 @@
 #define AI_RIGHT 1004
 #define AI_BOMB	1005
 #define AI_WAIT 1006
-#define DIR_UP 1001
-#define DIR_DOWN 1002
-#define DIR_LEFT 1003
-#define DIR_RIGHT 1004
+
 #include "PlayerClass.h"
 #include "MapClass.h"
 class AIBrainClass
@@ -19,7 +16,10 @@ public:
 	int mapFlood[15][13];
 	int calculateNPCNextEvent(PlayerClass &nonNPC, PlayerClass &npc, MapClass &map);
 private:
-	int calculateRecursive(int x, int y, int level, int direction);
+	void calculateRecursive(int x, int y, int level);
 	void output();
+	int getValue(int x, int y);
+	int traceBack(int _x, int _y);
+	int distance(int x1, int y1, int x2, int y2);
 };
 

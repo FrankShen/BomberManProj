@@ -16,69 +16,57 @@ int AIBrainClass::calculateNPCNextEvent(PlayerClass &nonNPC, PlayerClass &npc, M
 		for (int y = 0; y < 13; ++y){
 			if (map.getMapAtPos(x, y) >= 3) {
 				mapFlood[x][y] = -1;
-			} else if (map.getMapAtPos(x, y) == MAP_NON_NPC){
-				mapFlood[x][y] = -2;
 			} else {
 				mapFlood[x][y] = 0;
 			}
 		}
 	}
-	return calculateRecursive(npc.pos.x, npc.pos.y, 1, 0);
+	if (distance(nonNPC.pos.x, nonNPC.pos.y, npc.pos.x, npc.pos.y) <= 2){
+		return AI_WAIT;
+	}
+
+
+	calculateRecursive(npc.pos.x, npc.pos.y, 1);
+
+
+	return traceBack(nonNPC.pos.x, nonNPC.pos.y);
 }
 
-int AIBrainClass::calculateRecursive(int x, int y, int level,int direction)
+void AIBrainClass::calculateRecursive(int x, int y, int level)
 {
-	if (x < 0 || x > 14 || y < 0 || y > 12){
-		return 0;
+	if (x < 0 || y < 0 || x > 14 || y > 12){
+		return;
 	}
+	mapFlood[x][y] = level;
 
-	if (mapFlood[x][y] == 0){
-		mapFlood[x][y] = level;
-	} else if (mapFlood > 0){
-		if (mapFlood[x][y] > level){
-			mapFlood[x][y] = level;
-		} else {
-			return 0;
-		}
-	} else {
-		return 0;
-	}
-
-	if (mapFlood[x-1][y] == -2 && direction != DIR_LEFT){
-		output();
-		return AI_LEFT;
-	}
-	if (mapFlood[x][y-1] == -2  && direction != DIR_UP ){
-		return AI_UP;
-	}
-	if (mapFlood[x+1][y] == -2  && direction != DIR_RIGHT){
-		return AI_RIGHT;
-	}
-	if (mapFlood[x][y+1] == -2  && direction != DIR_DOWN){
-		return AI_DOWN;
-	}
-
-	if (direction != DIR_LEFT){
-		if (calculateRecursive(x-1, y, level+1, DIR_LEFT)){
-			return AI_LEFT;
+	if (getValue(x-1,y) != -1){
+		if (getValue(x-1,y) == 0){
+			calculateRecursive(x-1, y, level+1);
+		} else if (getValue(x-1,y) > (level+1)){
+			calculateRecursive(x-1, y, level+1);
 		}
 	}
-	if (direction != DIR_UP){
-		if (calculateRecursive(x, y-1, level+1, DIR_UP)){
-			return AI_UP;
+	if (getValue(x,y-1) != -1){
+		if (getValue(x,y-1) == 0){
+			calculateRecursive(x, y-1, level+1);
+		} else if (getValue(x,y-1) > (level+1)){
+			calculateRecursive(x, y-1, level+1);
 		}
 	}
-	if (direction != DIR_RIGHT){
-		if (calculateRecursive(x+1, y, level+1, DIR_RIGHT)){
-			return AI_RIGHT;
+	if (getValue(x+1,y) != -1){
+		if (getValue(x+1,y) == 0){
+			calculateRecursive(x+1, y, level+1);
+		} else if (getValue(x+1,y) > (level+1)){
+			calculateRecursive(x+1, y, level+1);
 		}
 	}
-	if (direction != DIR_DOWN){
-		if (calculateRecursive(x, y+1, level+1, DIR_DOWN)){
-			return AI_DOWN;
+	if (mapFlood[x][y+1] != -1){
+		if (mapFlood[x][y+1] == 0){
+			calculateRecursive(x, y+1, level+1);
+		} else if (mapFlood[x][y+1] > (level+1)){
+			calculateRecursive(x, y+1, level+1);
 		}
 	}
-	return 0;
 }
 
 void AIBrainClass::output()
@@ -91,4 +79,55 @@ void AIBrainClass::output()
 		std::cout << std::endl;
 	}
 	std::cout << std::endl << std::endl << std::endl;
+}
+
+int AIBrainClass::getValue(int x, int y)
+{
+	if (x >= 0 && x <= 14 && y >= 0 && y <= 12)
+		return mapFlood[x][y];
+	else
+		return -1;
+}
+
+int AIBrainClass::traceBack(int _x, int _y)
+{
+	int destinationLevel = mapFlood[_x][_y];
+	int x = _x;
+	int y = _y;
+	for (; destinationLevel >= 3; --destinationLevel){
+		if (getValue(x-1, y) == (destinationLevel-1)){
+			x = x-1;
+			continue;
+		}
+		if (getValue(x+1, y) == (destinationLevel-1)){
+			x = x+1;
+			continue;
+		}
+		if (getValue(x, y-1) == (destinationLevel-1)){
+			y = y-1;
+			continue;
+		}
+		if (getValue(x, y+1) == (destinationLevel-1)){
+			y = y+1;
+			continue;
+		}
+	}
+	if (getValue(x-1,y) == 1){
+		return AI_RIGHT;
+	}
+	if (getValue(x+1,y) == 1){
+		return AI_LEFT;
+	}
+	if (getValue(x,y-1) == 1){
+		return AI_DOWN;
+	}
+	if (getValue(x,y+1) == 1){
+		return AI_UP;
+	}
+	return AI_WAIT;
+}
+
+int AIBrainClass::distance(int x1, int y1, int x2, int y2)
+{
+	return (abs(x1-x2)+abs(y1-y2));
 }
