@@ -193,31 +193,20 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 				mShutdown = true;
 			}
 
-			gameScene.updateBombInfo(evt);
+			if (mKeyboard->isKeyDown(OIS::KC_SPACE)){
+				if (!gameScene.isSpaceKeyDown){
+					if (gameScene.nonNPCPlayer.bombAvailable && 
+						gameScene.map.getMapAtPos(gameScene.nonNPCPlayer.pos.x, gameScene.nonNPCPlayer.pos.y) <= 2){
 
-			if (!gameScene.NPCAnimState){
-				int npcNextEvent = gameScene.aiBrain.calculateNPCNextEvent(gameScene.nonNPCPlayer, gameScene.NPCPlayer, gameScene.map);
-				if (npcNextEvent == AI_DOWN){
-					gameScene.askingPlayer(NPC, EVENT_DOWN);
-				} else if (npcNextEvent == AI_UP){
-					gameScene.askingPlayer(NPC, EVENT_UP);
-				} else if (npcNextEvent == AI_LEFT){
-					gameScene.askingPlayer(NPC, EVENT_LEFT);
-				} else if (npcNextEvent == AI_RIGHT){
-					gameScene.askingPlayer(NPC, EVENT_RIGHT);
+							gameScene.thromBomb(gameScene.nonNPCPlayer);
+					}
+					gameScene.isSpaceKeyDown = true;
 				}
-			} else if (gameScene.NPCAnimState->hasEnded()){
-				int npcNextEvent = gameScene.aiBrain.calculateNPCNextEvent(gameScene.nonNPCPlayer, gameScene.NPCPlayer, gameScene.map);
-				if (npcNextEvent == AI_DOWN){
-					gameScene.askingPlayer(NPC, EVENT_DOWN);
-				} else if (npcNextEvent == AI_UP){
-					gameScene.askingPlayer(NPC, EVENT_UP);
-				} else if (npcNextEvent == AI_LEFT){
-					gameScene.askingPlayer(NPC, EVENT_LEFT);
-				} else if (npcNextEvent == AI_RIGHT){
-					gameScene.askingPlayer(NPC, EVENT_RIGHT);
-				}
+			} else {
+				gameScene.isSpaceKeyDown = false;
 			}
+
+			gameScene.updateBombInfo(evt);
 
 			if (mKeyboard->isKeyDown(OIS::KC_DOWN)){
 				if (!gameScene.nonNPCAnimState){
@@ -237,31 +226,50 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 				} else if (gameScene.nonNPCAnimState->hasEnded()){
 					gameScene.askingPlayer(NON_NPC, EVENT_LEFT);
 				}
-
-
-
 			} else if (mKeyboard->isKeyDown(OIS::KC_RIGHT)){
 				if (!gameScene.nonNPCAnimState){
 					gameScene.askingPlayer(NON_NPC, EVENT_RIGHT);
 				} else if (gameScene.nonNPCAnimState->hasEnded()){
 					gameScene.askingPlayer(NON_NPC, EVENT_RIGHT);
 				}
-
-
-
 			}
-			if (mKeyboard->isKeyDown(OIS::KC_SPACE)){
-				if (!gameScene.isSpaceKeyDown){
-					if (gameScene.nonNPCPlayer.bombAvailable && 
-						gameScene.map.getMapAtPos(gameScene.nonNPCPlayer.pos.x, gameScene.nonNPCPlayer.pos.y) <= 2){
 
-							gameScene.thromBomb(gameScene.nonNPCPlayer);
+			if (!gameScene.NPCAnimState){
+				int npcNextEvent = gameScene.aiBrain.calculateNPCNextEvent(gameScene.nonNPCPlayer, gameScene.NPCPlayer, gameScene.map);
+				if (npcNextEvent == AI_BOMB){
+					if (gameScene.NPCPlayer.bombAvailable && 
+						gameScene.map.getMapAtPos(gameScene.NPCPlayer.pos.x, gameScene.NPCPlayer.pos.y) <= 2){
+
+							gameScene.thromBomb(gameScene.NPCPlayer);
 					}
-					gameScene.isSpaceKeyDown = true;
+				} else if (npcNextEvent == AI_DOWN){
+					gameScene.askingPlayer(NPC, EVENT_DOWN);
+				} else if (npcNextEvent == AI_UP){
+					gameScene.askingPlayer(NPC, EVENT_UP);
+				} else if (npcNextEvent == AI_LEFT){
+					gameScene.askingPlayer(NPC, EVENT_LEFT);
+				} else if (npcNextEvent == AI_RIGHT){
+					gameScene.askingPlayer(NPC, EVENT_RIGHT);
 				}
-			} else {
-				gameScene.isSpaceKeyDown = false;
+			} else if (gameScene.NPCAnimState->hasEnded()){
+				int npcNextEvent = gameScene.aiBrain.calculateNPCNextEvent(gameScene.nonNPCPlayer, gameScene.NPCPlayer, gameScene.map);
+				if (npcNextEvent == AI_BOMB){
+					if (gameScene.NPCPlayer.bombAvailable && 
+						gameScene.map.getMapAtPos(gameScene.NPCPlayer.pos.x, gameScene.NPCPlayer.pos.y) <= 2){
+
+							gameScene.thromBomb(gameScene.NPCPlayer);
+					}
+				} else if (npcNextEvent == AI_DOWN){
+					gameScene.askingPlayer(NPC, EVENT_DOWN);
+				} else if (npcNextEvent == AI_UP){
+					gameScene.askingPlayer(NPC, EVENT_UP);
+				} else if (npcNextEvent == AI_LEFT){
+					gameScene.askingPlayer(NPC, EVENT_LEFT);
+				} else if (npcNextEvent == AI_RIGHT){
+					gameScene.askingPlayer(NPC, EVENT_RIGHT);
+				}
 			}
+
 			gameScene.updatePlayerInfo(evt);
 			if (gameScene.nonNPCAnimState){
 				if (!gameScene.nonNPCAnimState->hasEnded()){

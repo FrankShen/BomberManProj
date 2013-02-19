@@ -472,6 +472,7 @@ void GameSceneClass::calculateBombArea(BombClass &bomb)
 		} else if (map.getMapAtPos(bomb.pos.x, bomb.pos.y-i) < 0){
 			int x = bomb.pos.x;
 			int y = bomb.pos.y-i;
+
 			mSceneMgr->destroySceneNode(mapNode[x][y]);
 			map.setMapAtPos(x, y, MAP_NONE);
 		}
