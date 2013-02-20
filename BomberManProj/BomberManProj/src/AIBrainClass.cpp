@@ -11,6 +11,20 @@ AIBrainClass::~AIBrainClass(void)
 {
 }
 
+
+void AIBrainClass::getFarthestInfo()
+{
+	int farthestLevel = 0;
+	for (int x = 0; x < 15; ++x){
+		for (int y = 0; y < 13; ++y){
+			if (mapFlood[x][y] > farthestLevel){
+				farthestLevel = mapFlood[x][y];
+				farthestX = x;
+				farthestY = y;
+			}
+		}
+	}
+}
 int AIBrainClass::calculateNPCNextEvent(PlayerClass &nonNPC, PlayerClass &npc, MapClass &map)
 {
 	npcPosX = npc.pos.x;
@@ -27,25 +41,28 @@ int AIBrainClass::calculateNPCNextEvent(PlayerClass &nonNPC, PlayerClass &npc, M
 	}
 
 	if (AIState == AI_STAT_WAIT){
-		farthestLevel = 1;
-		calculateRecursive(npc.pos.x, npc.pos.y, 1, true);
+		
+		calculateRecursive(npc.pos.x, npc.pos.y, 1);
+		getFarthestInfo();
 		//output();
-		AIState = AI_STAT_NPC;
+		if (npc.bombAvailable > 0){
+			AIState = AI_STAT_NPC;
+		} else {
+			AIState = AI_STAT_FARTHER;
+		}
 		return AI_BOMB;
 	} else if (AIState == AI_STAT_NPC){
 		if (nonNPC.pos == npc.pos){
 			AIState = AI_STAT_WAIT;
+			return AI_WAIT;
 		}
+		calculateRecursive(npc.pos.x, npc.pos.y, 1);
 		int x = nonNPC.pos.x;
 		int y = nonNPC.pos.y;
 		if (mapFlood[x][y] == 0){
 			AIState = AI_STAT_FARTHER;
-			farthestLevel = 1;
-			calculateRecursive(npc.pos.x, npc.pos.y, 1, true);
-			//output();
 			return AI_WAIT;
 		}
-		calculateRecursive(npc.pos.x, npc.pos.y, 1, false);
 		//output();
 		return traceBack(nonNPC.pos.x, nonNPC.pos.y);
 	} else if (AIState == AI_STAT_FARTHER){
@@ -53,7 +70,7 @@ int AIBrainClass::calculateNPCNextEvent(PlayerClass &nonNPC, PlayerClass &npc, M
 			AIState = AI_STAT_WAIT;
 			return AI_WAIT;
 		}
-		calculateRecursive(npc.pos.x, npc.pos.y, 1, false);
+		calculateRecursive(npc.pos.x, npc.pos.y, 1);
 		//output();
 		return traceBack(farthestX, farthestY);
 	}
@@ -61,45 +78,38 @@ int AIBrainClass::calculateNPCNextEvent(PlayerClass &nonNPC, PlayerClass &npc, M
 	return AI_WAIT;
 }
 
-void AIBrainClass::calculateRecursive(int x, int y, int level, bool needRefresh)
+void AIBrainClass::calculateRecursive(int x, int y, int level)
 {
 	if (x < 0 || y < 0 || x > 14 || y > 12){
 		return;
 	}
 	mapFlood[x][y] = level;
-	if (needRefresh){
-		if (farthestLevel <= distance(x,y,npcPosX,npcPosY)){
-			farthestLevel = distance(x,y,npcPosX,npcPosY);
-			farthestX = x;
-			farthestY = y;
-		}
-	}
 	if (getValue(x-1,y) != -1){
 		if (getValue(x-1,y) == 0){
-			calculateRecursive(x-1, y, level+1, needRefresh);
+			calculateRecursive(x-1, y, level+1);
 		} else if (getValue(x-1,y) > (level+1)){
-			calculateRecursive(x-1, y, level+1, needRefresh);
+			calculateRecursive(x-1, y, level+1);
 		}
 	}
 	if (getValue(x,y-1) != -1){
 		if (getValue(x,y-1) == 0){
-			calculateRecursive(x, y-1, level+1, needRefresh);
+			calculateRecursive(x, y-1, level+1);
 		} else if (getValue(x,y-1) > (level+1)){
-			calculateRecursive(x, y-1, level+1, needRefresh);
+			calculateRecursive(x, y-1, level+1);
 		}
 	}
 	if (getValue(x+1,y) != -1){
 		if (getValue(x+1,y) == 0){
-			calculateRecursive(x+1, y, level+1, needRefresh);
+			calculateRecursive(x+1, y, level+1);
 		} else if (getValue(x+1,y) > (level+1)){
-			calculateRecursive(x+1, y, level+1, needRefresh);
+			calculateRecursive(x+1, y, level+1);
 		}
 	}
 	if (mapFlood[x][y+1] != -1){
 		if (mapFlood[x][y+1] == 0){
-			calculateRecursive(x, y+1, level+1, needRefresh);
+			calculateRecursive(x, y+1, level+1);
 		} else if (mapFlood[x][y+1] > (level+1)){
-			calculateRecursive(x, y+1, level+1, needRefresh);
+			calculateRecursive(x, y+1, level+1);
 		}
 	}
 }

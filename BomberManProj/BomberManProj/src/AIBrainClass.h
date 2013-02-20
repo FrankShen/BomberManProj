@@ -22,13 +22,14 @@ public:
 private:
 	
 	int AIState;
-	void calculateRecursive(int x, int y, int level, bool needRefresh);
+	void calculateRecursive(int x, int y, int level);
 	void output();
 	int farthestLevel;
 	int farthestX;
 	int farthestY;
 	int npcPosX;
 	int npcPosY;
+	void getFarthestInfo(void);
 	int getValue(int x, int y);
 	int traceBack(int _x, int _y);
 	int distance(int x1, int y1, int x2, int y2);
