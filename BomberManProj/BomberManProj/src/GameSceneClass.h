@@ -1,6 +1,7 @@
 #pragma once
 #include <Ogre.h>
 #include <map>
+#include <audiere.h>
 #include "PlayerClass.h"
 #include "AIBrainClass.h"
 #include "MapClass.h"
@@ -49,6 +50,9 @@ public:
 	void updatePlayerInfo(const Ogre::FrameEvent& evt);
 
 private:
+
+	audiere::OutputStreamPtr explodeSound;
+
 	int bombIndex;
 	Ogre::Vector3 getWorldCoord(Ogre::Vector2 pos);
 	void movingPlayer(int playerType, float speed, Ogre::SceneNode *playerNode, Ogre::Vector3 direction, Ogre::AnimationState *animState);

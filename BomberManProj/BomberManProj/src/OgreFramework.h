@@ -1,6 +1,7 @@
 #pragma once
 #include <Ogre.h>
 #include <OIS.h>
+#include <audiere.h>
 #include "MenuSceneClass.h"
 #include "GameSceneClass.h"
 

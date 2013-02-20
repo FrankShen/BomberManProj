@@ -116,9 +116,21 @@ bool OgreFramework::initOgre(void)
 	createGameScene();
 	sceneState = GAMESCENE;
 
+	audiere::AudioDevicePtr device(audiere::OpenDevice());
+	if (device){
+		audiere::OutputStreamPtr stream(audiere::OpenSound(device, "bgm.mp3", false));
+		if (stream){
+			stream->setRepeat(true);
+			stream->setVolume(1.0f);
+			stream->play();
+		}
+	}
+
 	mRoot->addFrameListener(this);
 	mRoot->startRendering();
 
+
+	
 	return true;
 }
 

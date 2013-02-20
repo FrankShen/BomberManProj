@@ -7,6 +7,8 @@ GameSceneClass::GameSceneClass(void)
 	NPCAnimState = NULL;
 	isSpaceKeyDown = false;
 	bombIndex = 0;
+	audiere::AudioDevicePtr device(audiere::OpenDevice());
+	explodeSound = audiere::OpenSound(device, "explode.mp3", false);
 }
 
 
@@ -376,6 +378,7 @@ int GameSceneClass::thromBomb(PlayerClass &player)
 
 void GameSceneClass::explodeBomb(int bombIdx)
 {
+	explodeSound->play();
 	std::map<int, BombClass>::iterator iter = bombPool.find(bombIdx);
 
 	mSceneMgr->destroySceneNode(iter->second.node);
