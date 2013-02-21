@@ -48,21 +48,39 @@ void MenuSceneClass::createScene(void)
 	Ogre::SceneNode *backgroundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("boomb_background");
 	backgroundNode->setPosition(0, 0, 0);
 
+	Ogre::Entity *grass = mSceneMgr->createEntity("boomb_grass", "boomb_grass.mesh");
+	grass->setMaterialName("boomb_grass");
+	grass->setCastShadows(true);
+	Ogre::SceneNode *grassNode = backgroundNode->createChildSceneNode("boomb_grass");
+	grassNode->setPosition(-300, 0, 1200);
+	grassNode->setScale(2, 2, 2);
+	grassNode->attachObject(grass);
+
+	Ogre::Entity *tree = mSceneMgr->createEntity("boomb_tree", "boomb_tree.mesh");
+	tree->setMaterialName("boomb_tree");
+	tree->setCastShadows(true);
+	Ogre::SceneNode *treeNode = backgroundNode->createChildSceneNode("boomb_tree");
+	treeNode->setPosition(-100, 0, -100);
+	treeNode->setScale(10, 10, 10);
+	treeNode->attachObject(tree);
+
 	Ogre::Entity *building = mSceneMgr->createEntity("boomb_building", "boomb_building.mesh");
 	Ogre::SceneNode *buildingNode = backgroundNode->createChildSceneNode("boomb_building");
-	buildingNode->setPosition(500, 0, 200);
+	building->setMaterialName("boomb_building");
+	building->setCastShadows(true);
+	buildingNode->setPosition(400, 0, -400);
 	buildingNode->setScale(500,500,500);
 	q1 = buildingNode->getOrientation();
 	q2 = Ogre::Quaternion(Ogre::Degree(45), Ogre::Vector3::UNIT_Y);
 	buildingNode->setOrientation(q1*q2);
 	buildingNode->attachObject(building);
 
+
 	// Set Fog
-	Ogre::ColourValue fadeColour(1,0.9,0.7);
-	mSceneMgr->setFog(Ogre::FOG_LINEAR, fadeColour, 0.0, 500, 1500);
 
 	// Set ambient light
-	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.7, 0.7, 0.7));
+	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
 	// Create a light
 	Ogre::Light* l = mSceneMgr->createLight("directlight");

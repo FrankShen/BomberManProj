@@ -109,13 +109,13 @@ bool OgreFramework::initOgre(void)
 	Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
 
 	// initialise menu scene
-	/*
+	
 	createMenuScene();
 	sceneState = MENUSCENE;
-	*/
+	/*
 	createGameScene();
 	sceneState = GAMESCENE;
-
+	*/
 	audiere::AudioDevicePtr device(audiere::OpenDevice());
 	if (device){
 		audiere::OutputStreamPtr stream(audiere::OpenSound(device, "bgm.mp3", false));
@@ -193,7 +193,8 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 	case MENUSCENE:
 		{
 			if (mKeyboard->isKeyDown(OIS::KC_RETURN)){
-				mShutdown = true;
+				gameStart();
+				return;
 			}
 			menuScene.mTitleAnimState->addTime(evt.timeSinceLastFrame);
 			menuScene.mBackgroundAnimState->addTime(evt.timeSinceLastFrame);
@@ -282,7 +283,10 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 				}
 			}
 
-			gameScene.updatePlayerInfo(evt);
+			if(gameScene.updatePlayerInfo(evt)){
+				gameEnd();
+				return;
+			}
 			if (gameScene.nonNPCAnimState){
 				if (!gameScene.nonNPCAnimState->hasEnded()){
 					gameScene.nonNPCAnimState->addTime(evt.timeSinceLastFrame);
@@ -300,4 +304,23 @@ void OgreFramework::logicalFrameFunc(const Ogre::FrameEvent& evt)
 	default:
 		break;
 	}
+}
+
+void OgreFramework::gameStart(void)
+{
+	mWindow->removeAllViewports();
+	mRoot->destroySceneManager(menuScene.mSceneMgr);
+	createGameScene();
+	sceneState = GAMESCENE;
+}
+
+void OgreFramework::gameEnd(void)
+{
+	mWindow->removeAllViewports();
+	mRoot->destroySceneManager(gameScene.mSceneMgr);
+	gameScene.nonNPCAnimState = 0;
+	gameScene.NPCAnimState = 0;
+	gameScene.mSceneMgr = 0;
+	createMenuScene();
+	sceneState = MENUSCENE;
 }

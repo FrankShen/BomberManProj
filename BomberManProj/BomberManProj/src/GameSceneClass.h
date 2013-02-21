@@ -47,7 +47,7 @@ public:
 	int thromBomb(PlayerClass &player);
 	void updateBombInfo(const Ogre::FrameEvent& evt);
 
-	void updatePlayerInfo(const Ogre::FrameEvent& evt);
+	int updatePlayerInfo(const Ogre::FrameEvent& evt);
 
 private:
 

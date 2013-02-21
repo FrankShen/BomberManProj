@@ -88,15 +88,17 @@ void GameSceneClass::createScene(void)
 		}
 	}
 
-	Ogre::Entity *nonNPC = mSceneMgr->createEntity("nonnpcplayer","ogrehead.mesh");
+	Ogre::Entity *nonNPC = mSceneMgr->createEntity("nonnpcplayer","boomb_mouse.mesh");
 	nonNPC->setCastShadows(true);
 	nonNPCPlayerNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("nonnpcplayerNode");
 	nonNPCPlayerNode->setPosition(getWorldCoord(nonNPCPlayer.pos));
+	nonNPCPlayerNode->setScale(2.0, 2.0, 2.0);
 	nonNPCPlayerNode->attachObject(nonNPC);
 
-	Ogre::Entity *npc = mSceneMgr->createEntity("npcplayer", "ogrehead.mesh");
+	Ogre::Entity *npc = mSceneMgr->createEntity("npcplayer", "boomb_mouse.mesh");
 	npc->setCastShadows(true);
 	NPCPlayerNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("npcplayerNode");
+	NPCPlayerNode->setScale(10.0, 10.0, 10.0);
 	NPCPlayerNode->setPosition(getWorldCoord(NPCPlayer.pos));
 	NPCPlayerNode->attachObject(npc);
 
@@ -284,9 +286,11 @@ void GameSceneClass::movingPlayer(int playerType, float speed, Ogre::SceneNode *
 	Ogre::TransformKeyFrame *key = track->createNodeKeyFrame(0);
 	Ogre::Vector3 currentPos = playerNode->getPosition();
 	key->setTranslate(currentPos);
+	key->setScale(Ogre::Vector3(2.0, 2.0, 2.0));
 	key = track->createNodeKeyFrame(speed);
 	currentPos += direction;
 	key->setTranslate(currentPos);
+	key->setScale(Ogre::Vector3(2.0, 2.0, 2.0));
 
 	animState->setEnabled(true);
 	animState->setLoop(false);
@@ -566,22 +570,23 @@ void GameSceneClass::updateBombInfo(const Ogre::FrameEvent& evt)
 	}
 }
 
-void GameSceneClass::updatePlayerInfo(const Ogre::FrameEvent& evt)
+int GameSceneClass::updatePlayerInfo(const Ogre::FrameEvent& evt)
 {
 	if (NPCPlayer.invincible > 0){
 		NPCPlayer.invincible -= evt.timeSinceLastFrame;
 	}
 	if (NPCPlayer.health <= 0){
 		//.....
-		// loser!
+		return 1;
 	}
 	if (nonNPCPlayer.invincible > 0){
 		nonNPCPlayer.invincible -= evt.timeSinceLastFrame;
 	}
 	if (nonNPCPlayer.health <= 0){
 		//....
-		// loser!
+		return 1;
 	}
+	return 0;
 }
 
 void GameSceneClass::addBonus(Ogre::Vector2 pos)

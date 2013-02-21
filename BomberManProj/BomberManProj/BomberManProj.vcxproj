@@ -54,7 +54,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\include\OIS;$(SolutionDir)\include\OGRE;$(SolutionDir)\boost</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration);$(SolutionDir)boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;OgreRTShaderSystem_d.lib;audiere.lib;%(AdditionalDependencies)</AdditionalDependencies>

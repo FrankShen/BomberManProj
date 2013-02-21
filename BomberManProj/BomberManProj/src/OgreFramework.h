@@ -41,5 +41,7 @@ private:
 	void createMenuScene(void);
 	void createGameScene(void);
 	void logicalFrameFunc(const Ogre::FrameEvent& evt);
+	void gameStart(void);
+	void gameEnd(void);
 };
 

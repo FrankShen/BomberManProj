@@ -38,6 +38,7 @@ MapClass::MapClass(void)
 			}
 		}
 	}
+	file.close();
 }
 
 
